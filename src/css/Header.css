@@ -1,0 +1,47 @@
+header {
+    padding: 10px;
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    background-color: #213547;
+    color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 4px 4px 4px 0px rgba(90, 171, 194, 0.411);
+}
+
+header > div {
+    display: flex;
+    align-items: center;
+
+}
+
+header > div > h1 {
+    padding-left: 10px;
+
+}
+
+header > div > img {
+    min-width: 40px;
+    width: 60px;
+    height: auto;
+    border-radius: 50%;
+}
+
+header > nav > ul{
+    display: flex;
+    list-style: none;
+}
+
+header > nav > ul > li{
+    padding: 10px;
+}
+
+a {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.87);
+    text-decoration: inherit;
+}
+a:hover {
+color: grey;
+}
+

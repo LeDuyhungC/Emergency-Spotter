@@ -6,8 +6,6 @@ export default function Report() {
         <>
             <Header />
             <Body />
-            <h1>Report</h1>
-            
         </>
     )
 }
