@@ -6,15 +6,30 @@ export default function Body_Report() {
         <body>
             <div className="report_div">
                 <h1>Report</h1>
-                <form>
+                <form action = "/action_page.php" target = "_blank">
                     
-                    <section>First Name: <input type = "text"></input></section>
-                    <section>Last Name: <input type = "text"></input></section>
-                    <section>Personnel Type: <input type = "text"></input></section>
-                    <section>Emergency: <input type = "text"></input></section>
-                    <section>Location: <input type = "text"></input></section>
-                    <section>Date: <input type = "date"></input>Time: <input type = "time"></input></section>
-                    <input type = "submit"></input>
+                    <label for = "fname">First Name:</label><br/>
+                    <input type = "text" id = "fname" name = "fname"></input><br/>
+
+                    <label for = "lname">Last Name:</label><br/>
+                    <input type = "text" id = "lname" name = "lname"></input><br/>
+
+                    <label for = "personnel">Personnel Type:</label><br/>
+                    <input type = "text" id = "personnel" name = "personnel"></input><br/>
+
+                    <label for = "emergency">Emergency:</label><br/>
+                    <input type = "text" id = "emergency" name = "emergency"></input><br/>
+
+                    <label for = "location">Location:</label><br/>
+                    <input type = "text" id = "location" name = "location"></input><br/>
+
+                    <label for = "date">Date:</label><br/>
+                    <input type = "date" id = "date" name = "date"></input><br/>
+
+                    <label for = "time">Time:</label><br/>
+                    <input type = "time" id = "time" name = "time"></input><br/>
+
+                    <input type = "submit" ></input><br/>
                 </form>
             </div>
         </body>
