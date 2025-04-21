@@ -1,38 +1,46 @@
+import { useState } from "react";
 import "../css/Body_Report.css";
 
 export default function Body_Report() {
+
+    const [fname, setFName] = useState("");
+    const [lname, setLName] = useState("");
+    const [emergency, setEmergency] = useState("");
+    const [location, setLocation] = useState("");
+
     return (
         <>
-        <body>
             <div className="report_div">
                 <h1>Report</h1>
-                <form action = "/action_page.php" target = "_blank">
-                    
-                    <label for = "fname">First Name:</label><br/>
-                    <input type = "text" id = "fname" name = "fname"></input><br/>
 
-                    <label for = "lname">Last Name:</label><br/>
-                    <input type = "text" id = "lname" name = "lname"></input><br/>
+                <section>
+                    <form action = "/action_page.php" target = "_blank">
+                        
+                        <label for = "fname">First Name:</label><br/>
+                        <input type = "text" id = "fname" name = "fname"></input><br/>
 
-                    <label for = "personnel">Personnel Type:</label><br/>
-                    <input type = "text" id = "personnel" name = "personnel"></input><br/>
+                        <label for = "lname">Last Name:</label><br/>
+                        <input type = "text" id = "lname" name = "lname"></input><br/>
 
-                    <label for = "emergency">Emergency:</label><br/>
-                    <input type = "text" id = "emergency" name = "emergency"></input><br/>
+                        <label for = "personnel">Personnel Type:</label><br/>
+                        <input type = "text" id = "personnel" name = "personnel"></input><br/>
 
-                    <label for = "location">Location:</label><br/>
-                    <input type = "text" id = "location" name = "location"></input><br/>
+                        <label for = "emergency">Emergency:</label><br/>
+                        <input type = "text" id = "emergency" name = "emergency"></input><br/>
 
-                    <label for = "date">Date:</label><br/>
-                    <input type = "date" id = "date" name = "date"></input><br/>
+                        <label for = "location">Location:</label><br/>
+                        <input type = "text" id = "location" name = "location"></input><br/>
 
-                    <label for = "time">Time:</label><br/>
-                    <input type = "time" id = "time" name = "time"></input><br/>
+                        <label for = "date">Date:</label><br/>
+                        <input type = "date" id = "date" name = "date"></input><br/>
 
-                    <input type = "submit" ></input><br/>
-                </form>
+                        <label for = "time">Time:</label><br/>
+                        <input type = "time" id = "time" name = "time"></input><br/>
+
+                        <input type = "submit" ></input><br/>
+                    </form>
+                </section>
             </div>
-        </body>
         </>
     )
 }
