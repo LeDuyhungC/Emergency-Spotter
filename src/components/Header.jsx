@@ -5,6 +5,7 @@ import "../css/Header.css"
 export default function Header() {
     return (
         <header>
+    
             <div>
                 <img src= {logo} alt="DHL Logo"/>
                 <h1>FAND</h1>
