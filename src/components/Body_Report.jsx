@@ -16,25 +16,25 @@ export default function Body_Report() {
                 <section>
                     <form action = "/action_page.php" target = "_blank">
                         
-                        <label for = "fname">First Name:</label><br/>
+                        <label htmlFor = "fname">First Name:</label><br/>
                         <input type = "text" id = "fname" name = "fname"></input><br/>
 
-                        <label for = "lname">Last Name:</label><br/>
+                        <label htmlFor = "lname">Last Name:</label><br/>
                         <input type = "text" id = "lname" name = "lname"></input><br/>
 
-                        <label for = "personnel">Personnel Type:</label><br/>
+                        <label htmlFor = "personnel">Personnel Type:</label><br/>
                         <input type = "text" id = "personnel" name = "personnel"></input><br/>
 
-                        <label for = "emergency">Emergency:</label><br/>
+                        <label htmlFor = "emergency">Emergency:</label><br/>
                         <input type = "text" id = "emergency" name = "emergency"></input><br/>
 
-                        <label for = "location">Location:</label><br/>
+                        <label htmlFor = "location">Location:</label><br/>
                         <input type = "text" id = "location" name = "location"></input><br/>
 
-                        <label for = "date">Date:</label><br/>
+                        <label htmlFor = "date">Date:</label><br/>
                         <input type = "date" id = "date" name = "date"></input><br/>
 
-                        <label for = "time">Time:</label><br/>
+                        <label htmlFor = "time">Time:</label><br/>
                         <input type = "time" id = "time" name = "time"></input><br/>
 
                         <input type = "submit" ></input><br/>
