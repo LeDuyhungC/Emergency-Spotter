@@ -1,6 +1,6 @@
 // config/dbconfig.cjs
-const mysql= require('mysql2/promise');
-require('dotenv').config();
+import mysql from 'mysql2/promise';
+import 'dotenv/config';
 
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
@@ -12,7 +12,7 @@ const dbConfig = {
 
 let connection;
 
-const connectToDatabase = async () => {
+export const connectToDatabase = async () => {
     try {
         connection = await mysql.createConnection(dbConfig);
         console.log('Connected to the database.');
@@ -23,4 +23,4 @@ const connectToDatabase = async () => {
     }
 };
 
-exports = { connectToDatabase, getConnection: () => connection };
+export const getConnection = () => connection;

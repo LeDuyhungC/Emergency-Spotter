@@ -14,7 +14,9 @@ const app = express();
 // Step 6: Middleware Setup
 app.use(express.json()); // Parse incoming JSON requests
 app.use(express.static('public')); // Serve static files from 'public' directory
-app.use(cors({origin:'http://localhost:5173/'})); // Allow frontend to access backend
+app.use(cors({
+    origin:'http://localhost:5173/'
+})); // Allow frontend to access backend
 
 // Step 7: Database Connection
 let connection;
