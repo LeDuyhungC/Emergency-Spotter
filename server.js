@@ -3,6 +3,7 @@
 import express from 'express';
 import cors from 'cors';
 import { submitReport } from './src/controller/reportController.js';
+import { handleDateReports } from './src/controller/queryOneController.js'
 
 // Step 4: Import Database Configuration
 import { connectToDatabase, getConnection } from './dbconfig.js';
@@ -15,7 +16,7 @@ const app = express();
 app.use(express.json()); // Parse incoming JSON requests
 app.use(express.static('public')); // Serve static files from 'public' directory
 app.use(cors({
-    origin:'http://localhost:5173/'
+    origin:'http://localhost:5173'
 })); // Allow frontend to access backend
 
 // Step 7: Database Connection
@@ -36,6 +37,22 @@ app.post('/api/report', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+app.get('/api/reportsByDate', async (req, res) => { // :searchType allows for different query types
+    if (!connection) {
+        console.error('API call to /api/reportsByDate but database connection is not available.'); //==========> database connection test
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+    }
+    try {
+        const results = await handleDateReports(req, connection); 
+        res.status(200).json(results);
+    } catch (err) {
+        console.error('Route error', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 
 // Step 9: Start the Server
 const PORT = process.env.PORT || 5002;

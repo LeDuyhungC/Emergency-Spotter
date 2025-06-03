@@ -16,6 +16,7 @@ export default function Header() {
                     <li><Link to = "/aboutUs">About Us</Link></li>
                     <li><Link to = "/functions">Functions</Link></li>
                     <li><Link to = "/report">Report</Link></li>
+                    <li><Link to = "/Query_One">Query One</Link></li>
                     <li>W/B</li>
                 </ul>
             </nav>
