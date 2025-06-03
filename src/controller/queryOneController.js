@@ -1,18 +1,18 @@
 
 const formatReport = (tuple) => {
-    let formattedDate = 'N/A'; //Both Default return
-    let formattedTime = 'N/A'; 
+    let formattedDate = 'NONE'; //Both Default return
+    let formattedTime = 'NONE'; 
 
-    // tuple.DATE_TIME will be the full timestamp string from the database
-    // e.g., "2023-10-27 15:30:00" (MySQL's default string representation for TIMESTAMP)
-    // or it could be a JavaScript Date object if the driver does that conversion (less common for mysql2 promise)
+    // The IF STATEMENT BELLOW CONVERTS MY timestamp type from MYSQL to a date and time String for JS so that it is easier to read and present in front-end
+    // tuple.DATE_TIME will is the full timestamp string from the database
+    // EX: "2023-10-27 15:30:00" (MySQL's string for TIMESTAMP)
     if (tuple.DATE_TIME) {
         const dt = new Date(tuple.DATE_TIME); // JavaScript's Date object parses timestamp strings well
 
         if (!isNaN(dt.getTime())) { // Check if the date is valid
         // Format Date to YYYY-MM-DD
         const year = dt.getFullYear();
-        const month = String(dt.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const month = String(dt.getMonth() + 1).padStart(2, '0');
         const day = String(dt.getDate()).padStart(2, '0');
         formattedDate = `${year}-${month}-${day}`;
 
@@ -27,9 +27,7 @@ const formatReport = (tuple) => {
     }
 
     return {
-        // These keys should match what your frontend table expects in `Object.keys(results[0])`
-        // and in the `<td>{row[header]}</td>` part.
-        Report_ID: tuple.ReportId, // Assuming ReportId is the alias from your SQL
+        Report_ID: tuple.ReportId,
         Report_Date: formattedDate,
         Report_Time: formattedTime,
         Emergency_Description: tuple.EmergencyDescription,
@@ -37,7 +35,6 @@ const formatReport = (tuple) => {
         Reporter_First_Name: tuple.FirstName,
         Reporter_Last_Name: tuple.LastName,
         Reporter_Role: tuple.Role,
-        // You can add or remove fields as needed based on what you want to display
     };
 };
 
@@ -72,8 +69,7 @@ async function handleDateReports(req, connection) {
     JOIN location l ON r.Location_ID = l.Id
   `;
 
-  // SQL query is now fixed to search by date
-  const sql = `${baseQuery} WHERE DATE(r.DATE_TIME) = ? ORDER BY r.DATE_TIME DESC`;
+  const sql = `${baseQuery} WHERE DATE(r.DATE_TIME) = ? ORDER BY r.Id DESC`;
   const params = [dateParam];
 
   try {
@@ -81,7 +77,6 @@ async function handleDateReports(req, connection) {
     return rows.map(formatReport); // Format results before sending
   } catch (err) {
     console.error(`Error executing query by date:`, err);
-    // This error will be caught by the route handler and sent as a 500 response
     throw new Error(`Failed to retrieve data: ${err.message}`); 
   }
 };

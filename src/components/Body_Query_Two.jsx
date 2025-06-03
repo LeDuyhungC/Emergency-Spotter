@@ -1,8 +1,7 @@
-// src/pages/Body_Query_One.jsx
 import { useState } from 'react';
-//import '../css/QueryPage.css'; // Assuming you have this CSS file
 
-export default function Body_Query_One() {
+
+export default function Body_Query_Two() {
     const [dateParam, setDateParam] = useState(''); // This will be the date
     const [results, setResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
