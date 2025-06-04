@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom"
 import logo from "../assets/Emergency_Spotter_Logo.png"
+import Query_Dropdown from "./Query_Dropdown"
 import "../css/Header.css"
+
 
 export default function Header() {
     return (
         <header>
-    
+        
             <div>
                 <img src= {logo} alt="DHL Logo"/>
                 <h1>FAND</h1>
@@ -14,9 +16,9 @@ export default function Header() {
                 <ul>
                     <li><Link to = "/home">Home</Link></li>
                     <li><Link to = "/aboutUs">About Us</Link></li>
-                    <li><Link to = "/functions">Functions</Link></li>
+                    <li><Query_Dropdown/></li>
                     <li><Link to = "/report">Report</Link></li>
-                    <li>W/B</li>
+                    <li><Link to = "/functions">Functions</Link></li>
                 </ul>
             </nav>
         </header>
