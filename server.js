@@ -15,7 +15,7 @@ const app = express();
 app.use(express.json()); // Parse incoming JSON requests
 app.use(express.static('public')); // Serve static files from 'public' directory
 app.use(cors({
-    origin:'http://localhost:5173/'
+    origin: 'http://localhost:5173'
 })); // Allow frontend to access backend
 
 // Step 7: Database Connection
@@ -38,7 +38,7 @@ app.post('/api/report', async (req, res) => {
 });
 
 // Step 9: Start the Server
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5004;
 (async () => {
     await initializeDatabase();
     app.listen(PORT, () => {

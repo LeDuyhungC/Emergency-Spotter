@@ -15,7 +15,7 @@ let connection;
 export const connectToDatabase = async () => {
     try {
         connection = await mysql.createConnection(dbConfig);
-        console.log('Connected to the database.');
+        console.log('Connected to the database TEST.');
         return connection;
     } catch (err) {
         console.error('Database connection failed:', err.stack);
