@@ -4,6 +4,9 @@ import express from 'express';
 import cors from 'cors';
 import { submitReport } from './src/controller/reportController.js';
 import { handleDateReports } from './src/controller/queryOneController.js'
+import { handleAllUsers } from './src/controller/queryTwoController.js';
+import { handleReportsMadeByUser } from './src/controller/queryTwoController.js';
+
 
 // Step 4: Import Database Configuration
 import { connectToDatabase, getConnection } from './dbconfig.js';
@@ -38,13 +41,46 @@ app.post('/api/report', async (req, res) => {
     }
 });
 
-app.get('/api/reportsByDate', async (req, res) => { // :searchType allows for different query types
+
+// Route for returning all reports within a specific day
+app.get('/api/reportsByDate', async (req, res) => {
     if (!connection) {
         console.error('API call to /api/reportsByDate but database connection is not available.'); //==========> database connection test
         return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
     }
     try {
         const results = await handleDateReports(req, connection); 
+        res.status(200).json(results);
+    } catch (err) {
+        console.error('Route error', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+//==================================================================QUERY2=====================================================
+// handleAllUsers
+app.get('/api/allUsers', async (req, res) => {
+    if (!connection) {
+        console.error('API call to /api/allUsers but database connection is not available.');
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+    }
+    try {
+        const results = await handleAllUsers(req, connection); 
+        res.status(200).json(results);
+    } catch (err) {
+        console.error('Route error', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+// handleReportsMadeByUser
+app.get('/api/reportsByUserId', async (req, res) => {
+    if (!connection) {
+        console.error('API call to /api/reportsByUserId but database connection is not available.'); //==========> database connection test
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+    }
+    try {
+        const results = await handleReportsMadeByUser(req, connection); 
         res.status(200).json(results);
     } catch (err) {
         console.error('Route error', err);

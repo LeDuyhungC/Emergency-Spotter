@@ -1,11 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 
 export default function Body_Query_Two() {
-    const [dateParam, setDateParam] = useState(''); // This will be the date
+    const [userParam, setUserParam] = useState(''); // This will be the date
     const [results, setResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
+
+    const [employees, setEmployees] = useState([]);
+    const [isLoadingEmployees, setIsLoadingEmployees] = useState(true);
+    const [employeeError, setEmployeeError] = useState(null);
+
+
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            setIsLoadingEmployees(true);
+            setEmployeeError(null);
+            try {
+                const url = 'http://localhost:5002/api/allUsers'
+                const response = await fetch(url);
+                const errorData = await response.json();
+                if (!response.ok) throw new Error(errorData.error || 'Failed to fetch employees list');
+                const data = await response.json();
+                setEmployees(data);
+            } catch (err){
+                setEmployeeError(err.message);
+                console.error("Error fetching emplolyee:" + err);
+            } finally {
+                setIsLoadingEmployees(false);
+            }
+        };
+        fetchEmployees();
+    }, []);
+
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -13,26 +40,23 @@ export default function Body_Query_Two() {
         setError('');
         setResults([]);
 
-        if (!dateParam.trim()) { // Simplified validation
+        if (!userParam.trim()) { // Simplified validation
             setError('Please select a date.');
             setIsLoading(false);
             return;
         }
 
         try {
-        const url = `http://localhost:5002/api/reportsByDate?param=${encodeURIComponent(dateParam)}`; // --> encodeURIComponent(dateParam)
-
-        const response = await fetch(url); // fetching information from data base
-        const data = await response.json();
-
-        if (!response.ok) throw new Error(data.error || 'Failed to fetch data');
-
-        setResults(data); // useState function to change the value of the result
-        setError('');
+            const url = `http://localhost:5002/api/reportsByUserId?param=${encodeURIComponent(userParam)}`; // --> encodeURIComponent(userParam)
+            const response = await fetch(url); // fetching information from data base
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Failed to fetch data');
+            setResults(data); // useState function to change the value of the result
+            setError('');
         } catch (err) {
-        setError(err.message);
+            setError(err.message);
         } finally { // exectutes no matter what even when funneled into try or catch
-        setIsLoading(false);
+            setIsLoading(false);
         }
     };
 
@@ -77,27 +101,33 @@ export default function Body_Query_Two() {
 
     return (
         <div className="query-container">
-        <h1>Info of Reports in a Day</h1>
+        <h1>All reports on User</h1>
         <form onSubmit={handleSearch} className="query-form">
             
             <div className="form-group">
-            <label htmlFor="dateParam">Select Date:</label>
-            <input
-                type="date" // Type is always 'date'
-                id="dateParam"
-                value={dateParam}
-                onChange={(e) => setDateParam(e.target.value)}
-            />
+                <label htmlFor="user-select">Select User:</label>
+                {isLoadingEmployees && <p>Loading...</p>}
+                {employeeError && <p>Error Loading: {employeeError}</p>}
+                {!isLoadingEmployees && !employeeError && (
+                    <select id='user-select' value={userParam} onChange={(e) => setUserParam(e.target.value)} disabled={isLoadingEmployees || employees.length}>
+                        <option value=""> Select User</option>
+                        {employees.map((employee) => (
+                            <option key={employee.UserId} value={employee.UserId}>
+                                {employee.First_Name} {employee.Last_Name}
+                            </option>
+                        ))}
+                    </select>
+                )}
             </div>
             
-            <button type="submit" disabled={isLoading}>
-            {isLoading ? 'Searching...' : 'Search'}
+            <button type="submit" disabled={isLoading || !userParam || isLoadingEmployees}>
+                {isLoading ? 'Searching...' : 'Search'}
             </button>
         </form>
-        <div className="results-container">
-            {isLoading && <p>Loading results...</p>}
-            {!isLoading && renderTable()}
-        </div>
+            <div className="results-container">
+                {isLoading && <p>Loading results...</p>}
+                {(isLoading || error || results) && renderTable()}
+            </div>
         </div>
     );
 }

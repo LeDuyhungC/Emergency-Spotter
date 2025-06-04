@@ -78,27 +78,27 @@ export default function Body_Query_One() {
 
     return (
         <div className="query-container">
-        <h1>Info of Reports in a Day</h1>
-        <form onSubmit={handleSearch} className="query-form">
-            
-            <div className="form-group">
-            <label htmlFor="dateParam">Select Date:</label>
-            <input
-                type="date" // Type is always 'date'
-                id="dateParam"
-                value={dateParam}
-                onChange={(e) => setDateParam(e.target.value)}
-            />
+            <h1>Info of Reports in a Day</h1>
+            <form onSubmit={handleSearch} className="query-form">
+                
+                <div className="form-group">
+                <label htmlFor="dateParam">Select Date:</label>
+                <input
+                    type="date" // Type is always 'date'
+                    id="dateParam"
+                    value={dateParam}
+                    onChange={(e) => setDateParam(e.target.value)}
+                />
+                </div>
+                
+                <button type="submit" disabled={isLoading}>
+                {isLoading ? 'Searching...' : 'Search'}
+                </button>
+            </form>
+            <div className="results-container">
+                {isLoading && <p>Loading results...</p>}
+                {!isLoading && renderTable()}
             </div>
-            
-            <button type="submit" disabled={isLoading}>
-            {isLoading ? 'Searching...' : 'Search'}
-            </button>
-        </form>
-        <div className="results-container">
-            {isLoading && <p>Loading results...</p>}
-            {!isLoading && renderTable()}
-        </div>
         </div>
     );
 }
