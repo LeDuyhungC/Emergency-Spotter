@@ -5,7 +5,8 @@ import cors from 'cors';
 import { submitReport } from './src/controller/reportController.js';
 import { handleDateReports } from './src/controller/queryOneController.js'
 import { handleAllUsers } from './src/controller/queryTwoController.js';
-import { handleReportsMadeByUser } from './src/controller/queryTwoController.js';
+import { handleReportsByLocation } from './src/controller/queryThreeController.js';
+import { handleReportsByEmergencyCount } from './src/controller/queryFourController.js';
 
 
 // Step 4: Import Database Configuration
@@ -20,7 +21,6 @@ app.use(express.json()); // Parse incoming JSON requests
 app.use(express.static('public')); // Serve static files from 'public' directory
 app.use(cors({
     origin: 'http://localhost:5173'
-    origin:'http://localhost:5173'
 })); // Allow frontend to access backend
 
 // Step 7: Database Connection
@@ -59,13 +59,13 @@ app.get('/api/reportsByDate', async (req, res) => {
 });
 //==================================================================QUERY2=====================================================
 // handleAllUsers
-app.get('/api/allUsers', async (req, res) => {
+app.get('/api/reportsByLocation', async (req, res) => {
     if (!connection) {
-        console.error('API call to /api/allUsers but database connection is not available.');
+        console.error('API call to /api/reportsByLocation but database connection is not available.'); //==========> database connection test
         return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
     }
     try {
-        const results = await handleAllUsers(req, connection);
+        const results = await handleReportsByLocation(req, connection);
         res.status(200).json(results);
     } catch (err) {
         console.error('Route error', err);
@@ -73,22 +73,18 @@ app.get('/api/allUsers', async (req, res) => {
     }
 });
 
+// In server.js, within the route definitions
+app.get('/api/reportsByEmergencyCount', async (req, res) => {
+    try {
+        const result = await handleReportsByEmergencyCount(req, connection);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Route error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
 // handleReportsMadeByUser
-app.get('/api/reportsByUserId', async (req, res) => {
-    if (!connection) {
-        console.error('API call to /api/reportsByUserId but database connection is not available.'); //==========> database connection test
-        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
-    }
-    try {
-        const results = await handleReportsMadeByUser(req, connection);
-        res.status(200).json(results);
-    } catch (err) {
-        console.error('Route error', err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
 
 
 // Step 9: Start the Server
