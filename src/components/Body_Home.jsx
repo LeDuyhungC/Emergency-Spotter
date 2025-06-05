@@ -1,5 +1,7 @@
+//npm install @react-google-maps/api , react google api package
 import React, { useState } from "react";
 import "../css/Body_Home.css";
+import Body_Home_Map from './Body_Home_Map';
 
 const Body_Home = () => {
   const slides = ["Slide 1", "Slide 2", "Slide 3", "Slide 4", "Slide 5"];
@@ -48,6 +50,7 @@ const Body_Home = () => {
           </div>
         </div>
       </div>
+      <Body_Home_Map address={"1900 Commerce St, Tacoma, WA 98402"}/>
     </div>
   );
 };
