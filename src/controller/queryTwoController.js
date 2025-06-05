@@ -32,7 +32,7 @@ const formatReport = (tuple) => {
         Report_Date: formattedDate,
         Report_Time: formattedTime,
         Emergency_Description: tuple.EmergencyDescription,
-        Location_Address: tuple.LocationAddress,
+        Location_Address: tuple.LocationAddress
     };
 };
 

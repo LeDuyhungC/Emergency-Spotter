@@ -7,30 +7,30 @@ export default function Body_Query_Two() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const [employees, setEmployees] = useState([]);
-    const [isLoadingEmployees, setIsLoadingEmployees] = useState(true);
-    const [employeeError, setEmployeeError] = useState(null);
+    const [users, setUsers] = useState([]);
+    const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+    const [userError, setUserError] = useState(null);
 
 
     useEffect(() => {
-        const fetchEmployees = async () => {
-            setIsLoadingEmployees(true);
-            setEmployeeError(null);
+        const fetchUser = async () => {
+            setIsLoadingUsers(true);``
+            setUserError(null);
             try {
                 const url = 'http://localhost:5002/api/allUsers'
                 const response = await fetch(url);
-                const errorData = await response.json();
-                if (!response.ok) throw new Error(errorData.error || 'Failed to fetch employees list');
                 const data = await response.json();
-                setEmployees(data);
+                if (!response.ok) throw new Error(data.error || 'Failed to fetch users list');
+                setUsers(data);
+                console.log(data);
             } catch (err){
-                setEmployeeError(err.message);
+                setUserError(err.message);
                 console.error("Error fetching emplolyee:" + err);
             } finally {
-                setIsLoadingEmployees(false);
+                setIsLoadingUsers(false);
             }
         };
-        fetchEmployees();
+        fetchUser();
     }, []);
 
 
@@ -101,29 +101,28 @@ export default function Body_Query_Two() {
 
     return (
         <div className="query-container">
-        <h1>All reports on User</h1>
-        <form onSubmit={handleSearch} className="query-form">
-            
-            <div className="form-group">
-                <label htmlFor="user-select">Select User:</label>
-                {isLoadingEmployees && <p>Loading...</p>}
-                {employeeError && <p>Error Loading: {employeeError}</p>}
-                {!isLoadingEmployees && !employeeError && (
-                    <select id='user-select' value={userParam} onChange={(e) => setUserParam(e.target.value)} disabled={isLoadingEmployees || employees.length}>
-                        <option value=""> Select User</option>
-                        {employees.map((employee) => (
-                            <option key={employee.UserId} value={employee.UserId}>
-                                {employee.First_Name} {employee.Last_Name}
-                            </option>
-                        ))}
-                    </select>
-                )}
-            </div>
-            
-            <button type="submit" disabled={isLoading || !userParam || isLoadingEmployees}>
-                {isLoading ? 'Searching...' : 'Search'}
-            </button>
-        </form>
+            <h1>All reports on User</h1>
+            <form onSubmit={handleSearch} className="query-form">
+                <div className="form-group">
+                    <label htmlFor="user-select">Select User:</label>
+                    {isLoadingUsers && <p>Loading...</p>}
+                    {userError && <p>Error Loading: {userError}</p>}
+                    {!isLoadingUsers && !userError && (
+                        <select id='user-select' value={userParam} onChange={(e) => setUserParam(e.target.value)} disabled={isLoadingUsers || users.length === 0}>
+                            <option value=""> Select User</option>
+                            {users.map((user) => (
+
+                                <option key={user.UserId} value={user.UserId}>
+                                    {user.First_Name} {user.Last_Name} {console.log(user)}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+                </div>
+                <button type="submit" disabled={isLoading || !userParam || isLoadingUsers}>
+                    {isLoading ? 'Searching...' : 'Search'}
+                </button>
+            </form>
             <div className="results-container">
                 {isLoading && <p>Loading results...</p>}
                 {(isLoading || error || results) && renderTable()}
