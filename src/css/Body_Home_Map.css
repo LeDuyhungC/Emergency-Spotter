@@ -11,10 +11,9 @@
 }
 .controls {
     color: black;
-    width: 20%;
 }
 .map {
-    width: 80%;
+    width: 100%;
     height: 100vh;
     max-height: 500px;
 }
