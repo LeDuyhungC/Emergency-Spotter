@@ -1,6 +1,6 @@
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { useState, useMemo, useEffect } from "react";
-import "../css/Body_Home_Map.css";
+import "/frontend/css/Body_Home_Map.css";
 //npm install @react-google-maps/api , react google api package
 const libraries = ["places"];
 const presetCenter = { lat: 47.24537488661276, lng: -122.43856306605967}

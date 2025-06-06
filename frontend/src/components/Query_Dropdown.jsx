@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from 'react-router-dom'
-import '../css/Query_Dropdown.css'
+import '/frontend/css/Query_Dropdown.css'
 
 
 function formatDropDown(queryPages) {

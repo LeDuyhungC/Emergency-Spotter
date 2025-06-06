@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../css/Body_Report.css";
+import "/frontend/css/Body_Report.css";
 
 export default function Body_Report() {
 

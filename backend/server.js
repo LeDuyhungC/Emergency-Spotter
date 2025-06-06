@@ -2,17 +2,17 @@
 // Step 1: Import Required Libraries
 import express from 'express';
 import cors from 'cors';
-import { submitReport } from './src/controller/reportController.js';
-import { handleAllAddresses } from './src/controller/mapController.js';
+import { submitReport } from './controller/reportController.js';
+import { handleAllAddresses } from './controller/mapController.js';
 
-import { handleDateReports } from './src/controller/queryOneController.js';
-import { handleAllUsers } from './src/controller/queryTwoController.js';
-import { handleReportsMadeByUser } from './src/controller/queryTwoController.js';
+import { handleDateReports } from './controller/queryOneController.js';
+import { handleAllUsers } from './controller/queryTwoController.js';
+import { handleReportsMadeByUser } from './controller/queryTwoController.js';
 
-import { handleReportsByLocation } from './src/controller/queryThreeController.js';
-import { handleReportsByEmergencyCount } from './src/controller/queryFourController.js';
-import { handleUsersByRoleAndCity } from './src/controller/queryFiveController.js';
-import { submitEmergencyReport } from './src/controller/querySixController.js';
+import { handleReportsByLocation } from './controller/queryThreeController.js';
+import { handleReportsByEmergencyCount } from './controller/queryFourController.js';
+import { handleUsersByRoleAndCity } from './controller/queryFiveController.js';
+import { submitEmergencyReport } from './controller/querySixController.js';
 import mysql from 'mysql2/promise';
 
 

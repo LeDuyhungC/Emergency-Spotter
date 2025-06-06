@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
-import logo from "../assets/Emergency_Spotter_Logo.png"
+import logo from "/frontend/assets/Emergency_Spotter_Logo.png"
 import Query_Dropdown from "./Query_Dropdown"
-import "../css/Header.css"
+import "/frontend/css/Header.css"
 
 
 export default function Header() {
