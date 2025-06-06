@@ -31,7 +31,7 @@ export default function Body_Query_Six() {
     }
 
     try {
-      const url = `http://localhost:5004/api/submitEmergencyReport?userId=${encodeURIComponent(userId)}&emergencyId=${encodeURIComponent(emergencyId)}&locationId=${encodeURIComponent(locationId)}`;
+      const url = `http://localhost:5002/api/submitEmergencyReport?userId=${encodeURIComponent(userId)}&emergencyId=${encodeURIComponent(emergencyId)}&locationId=${encodeURIComponent(locationId)}`;
       const response = await fetch(url, { method: 'POST' });
       const text = await response.text();
       console.log('Raw response:', text);
@@ -78,8 +78,8 @@ export default function Body_Query_Six() {
 
   return (
     <div className="query-container">
-      <h1>Submit Emergency Report (Transaction)</h1>
-      <form onSubmit={handleSubmit} className="query-form">
+      <h3>Submit Emergency Report (Transaction)</h3>
+      <form onSubmit={handleSubmit} className="query-form mb-4">
         <div className="form-group">
           <label htmlFor="userId">Enter User ID:</label>
           <input
@@ -110,7 +110,7 @@ export default function Body_Query_Six() {
             placeholder="e.g., 1"
           />
         </div>
-        <button type="submit" disabled={isLoading}>
+        <button type="submit" className="btn btn-primary mt-3" disabled={isLoading}>
           {isLoading ? 'Submitting...' : 'Submit Report'}
         </button>
         <a href="home">Back to Main Page</a>

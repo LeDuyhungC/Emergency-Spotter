@@ -5,7 +5,7 @@ import '/frontend/css/Query_Dropdown.css'
 
 function formatDropDown(queryPages) {
     return (
-        <div className="dropdown-menu">
+        <div className="dropdown-container">
           {queryPages.map((page) => (
             <Link key={page.path} to={page.path} className="dropdown-item">
               {page.label}
@@ -15,8 +15,10 @@ function formatDropDown(queryPages) {
     )
 }
 
-export default function Query_Dropdown() {
+export default function Query_Dropdown( {isOpen} ) {
     const [isDropdownOpen, setDropDownOpen] = useState(false);
+
+    if (!isOpen) return null;
 
     const queryPages = [ //Array of my obj that contain path, and label
         { path: '/query_One', label: 'Query One' },
@@ -28,13 +30,12 @@ export default function Query_Dropdown() {
     ];
 
     return (
-    <div
-        className="dropdown-container"
-        onMouseEnter={() => setDropDownOpen(true)}  //ReactHandler id if mouse is on button
-        onMouseLeave={() => setDropDownOpen(false)}
-    >
-        <button className="dropdown-button">Queries</button>
-        {isDropdownOpen && formatDropDown(queryPages)}
-    </div>
+        <div className="query-dropdown-menu">
+            {queryPages.map((page) => (
+                <Link key={page.path} to={page.path} className="query-dropdown-item">
+                    {page.label}
+                </Link>
+            ))}
+        </div>
     );
 }

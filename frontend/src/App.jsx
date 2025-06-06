@@ -1,4 +1,3 @@
-import './App.css'
 import { BrowserRouter, Routes, Route, Router } from 'react-router-dom'
 
 import AboutUs from "./pages/AboutUs"
@@ -13,7 +12,6 @@ import QueryThree from "./pages/Query_Three"
 import QueryFour from "./pages/Query_Four"
 import QueryFive from "./pages/Query_Five"
 import QuerySix from "./pages/Query_Six"
-
 
 export default function App() {
 

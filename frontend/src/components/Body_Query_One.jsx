@@ -1,6 +1,5 @@
 // src/pages/Body_Query_One.jsx
 import { useState } from 'react';
-//import '../css/QueryPage.css'; // Assuming you have this CSS file
 
 export default function Body_Query_One() {
     const [dateParam, setDateParam] = useState(''); // This will be the date
@@ -55,7 +54,7 @@ export default function Body_Query_One() {
         Is a inner map that uses the header is the current columns name in the iteration
         */
         return (
-            <table>
+            <table className="table table-dark table-striped table-hover">
                     <thead>
                         <tr>
                             {
@@ -78,11 +77,11 @@ export default function Body_Query_One() {
 
     return (
         <div className="query-container">
-            <h1>Info of Reports in a Day</h1>
-            <form onSubmit={handleSearch} className="query-form">
+            <h3>Info of Reports in a Day</h3>
+            <form onSubmit={handleSearch} className="query-form mb-4">
                 
                 <div className="form-group">
-                <label htmlFor="dateParam">Select Date:</label>
+                <label htmlFor="dateParam">Select Date: </label>
                 <input
                     type="date" // Type is always 'date'
                     id="dateParam"
@@ -91,14 +90,20 @@ export default function Body_Query_One() {
                 />
                 </div>
                 
-                <button type="submit" disabled={isLoading}>
+                <button type="submit" className="btn btn-primary mt-3" disabled={isLoading}>
                 {isLoading ? 'Searching...' : 'Search'}
                 </button>
             </form>
             <div className="results-container">
                 {isLoading && <p>Loading results...</p>}
-                {!isLoading && renderTable()}
+                {!isLoading && results.length > 0 && (
+                    <div className="table-responsive"> 
+                        {renderTable()}
+                    </div>
+                )}
             </div>
+
+            {!isLoading && results.length === 0 && <p>No results found for the selected date.</p>}
         </div>
     );
 }

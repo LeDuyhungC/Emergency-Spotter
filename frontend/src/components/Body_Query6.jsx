@@ -55,7 +55,7 @@ const Query6 = () => {
     if (!result || !result.success) return null;
 
     return (
-      <table className="w-4/5 mx-auto mt-4 border-collapse">
+      <table className="table table-dark table-striped table-hover">
         <thead>
           <tr className="bg-gray-200">
             <th className="border border-black p-2">Account ID</th>
@@ -78,9 +78,9 @@ const Query6 = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-100">
-      <h1 className="text-2xl font-bold text-center mb-4">
+      <h3>
         Query 6: Transfer Funds for Emergency Response
-      </h1>
+      </h3>
       <div className="flex flex-col items-center gap-4">
         <div className="flex flex-col w-64">
           <label className="text-lg">From Account ID:</label>
@@ -117,7 +117,7 @@ const Query6 = () => {
         <button
           onClick={handleSubmit}
           disabled={isLoading}
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+          className="btn btn-primary mt-3"
         >
           {isLoading ? 'Processing...' : 'Transfer Funds'}
         </button>
@@ -128,7 +128,11 @@ const Query6 = () => {
       {result && result.success && (
         <div className="mt-6">
           <p className="text-green-500 text-center">{result.message}</p>
-          {renderTable()}
+          {(
+              <div className='table-responsive'>
+                  {renderTable()}
+              </div>
+          )}
         </div>
       )}
       

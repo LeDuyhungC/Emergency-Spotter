@@ -111,8 +111,8 @@ export default function Body_Report() {
 
     return (
         <div className="report_div">
-            <h1>Report</h1>
-            <form onSubmit={handleSubmit}>
+            <h3>Report</h3>
+            <form onSubmit={handleSubmit} className="query-form mb-4">
                 <section>First Name: <input type="text" required /></section>
                 <section>Last Name: <input type="text" required /></section>
                 <section>Personnel Type: <input type="text" required /></section>

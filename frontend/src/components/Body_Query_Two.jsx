@@ -77,7 +77,7 @@ export default function Body_Query_Two() {
         Is a inner map that uses the header is the current columns name in the iteration
         */
         return (
-            <table>
+            <table className="table table-dark table-striped table-hover">
                     <thead>
                         <tr>
                             {
@@ -100,8 +100,8 @@ export default function Body_Query_Two() {
 
     return (
         <div className="query-container">
-            <h1>All reports on User</h1>
-            <form onSubmit={handleSearch} className="query-form">
+            <h3>All reports on User</h3>
+            <form onSubmit={handleSearch} className="query-form mb-4">
                 <div className="form-group">
                     <label htmlFor="user-select">Select User:</label>
                     {isLoadingUsers && <p>Loading...</p>}
@@ -118,13 +118,17 @@ export default function Body_Query_Two() {
                         </select>
                     )}
                 </div>
-                <button type="submit" disabled={isLoading || !userParam || isLoadingUsers}>
+                <button type="submit" className="btn btn-primary mt-3" disabled={isLoading || !userParam || isLoadingUsers}>
                     {isLoading ? 'Searching...' : 'Search'}
                 </button>
             </form>
             <div className="results-container">
                 {isLoading && <p>Loading results...</p>}
-                {(isLoading || error || results) && renderTable()}
+                {(isLoading || error || results) && (
+                    <div className='table-responsive'>
+                        {renderTable()}
+                    </div>
+                )}
             </div>
         </div>
     );
