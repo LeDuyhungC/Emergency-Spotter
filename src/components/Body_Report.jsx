@@ -1,6 +1,59 @@
+import { useState, useEffect } from "react";
 import "../css/Body_Report.css";
 
 export default function Body_Report() {
+
+// =====================================================GETTING THE CURRENT LOCATION====================================================================
+    //Using the google map geocoding and navigator api
+    const [coordinates, setCoordinates] = useState(null);
+    const [address, setAddress] = useState(null);
+    const [status, setStatus] = useState(null);
+    const [location, setLocation] = useState('');
+// If address state changes this effect will apply.
+    useEffect(() => { 
+    if (address) {
+        setLocation(address);
+    }
+    }, [address]);
+// Using the navigator api to get lng lat position
+    useEffect(() => {
+        const getCurrentPosition = () => {
+            if (!navigator.geolocation) {
+                setStatus("Geolocation is not supported by your browser");
+                return;
+            }
+            setStatus("Loading...");
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setStatus(null);
+                    setCoordinates({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                    });
+                    reverseGeocode(position.coords.latitude, position.coords.longitude);
+                },
+                (error) => {
+                    setStatus(`Location Error: ${error.message}`);
+                }
+            );
+        };
+        getCurrentPosition();
+    }, []);
+// Function to reverse geocode coordinates to address using the google map api
+    const reverseGeocode = async (latitude, longitude) => {
+        const apiKey = import.meta.env.VITE_API_KEY_GOOGLE_MAP;
+        const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
+        try {
+            const response = await fetch(geocodingUrl);
+            const data = await response.json();
+            if (data.status === 'OK' && data.results.length > 0) setAddress(data.results[0].formatted_address);
+            else setStatus("Error reverse geocoding: " + data.status);
+        } catch (error) {
+            setStatus("Error reverse geocoding: " + error.message);
+        }
+    };
+//=======================================================================================================================================================
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -20,7 +73,7 @@ export default function Body_Report() {
 
         try {
             console.log('Submitting form data:', formData); // Debug log
-            const response = await fetch('http://localhost:5004/api/report', {
+            const response = await fetch('http://localhost:5002/api/report', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +117,15 @@ export default function Body_Report() {
                 <section>Last Name: <input type="text" required /></section>
                 <section>Personnel Type: <input type="text" required /></section>
                 <section>Emergency: <input type="text" required /></section>
-                <section>Location: <input type="text" required /></section>
+                <section>
+                    Location: 
+                    <input 
+                        type="text" 
+                        value={location} 
+                        onChange={(e) => setLocation(e.target.value)} 
+                        required 
+                    />
+                </section>
                 <section>
                     Date: <input type="date" required />
                     Time: <input type="time" required />

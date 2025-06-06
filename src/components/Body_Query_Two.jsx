@@ -14,7 +14,7 @@ export default function Body_Query_Two() {
 
     useEffect(() => {
         const fetchUser = async () => {
-            setIsLoadingUsers(true);``
+            setIsLoadingUsers(true);
             setUserError(null);
             try {
                 const url = 'http://localhost:5002/api/allUsers'
@@ -22,10 +22,9 @@ export default function Body_Query_Two() {
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.error || 'Failed to fetch users list');
                 setUsers(data);
-                console.log(data);
             } catch (err){
                 setUserError(err.message);
-                console.error("Error fetching emplolyee:" + err);
+                console.error("Error fetching users:" + err);
             } finally {
                 setIsLoadingUsers(false);
             }
@@ -113,7 +112,7 @@ export default function Body_Query_Two() {
                             {users.map((user) => (
 
                                 <option key={user.UserId} value={user.UserId}>
-                                    {user.First_Name} {user.Last_Name} {console.log(user)}
+                                    {user.First_Name} {user.Last_Name}
                                 </option>
                             ))}
                         </select>

@@ -19,7 +19,7 @@ export default function Body_Query_Three() {
         }
 
         try {
-            const url = `http://localhost:5004/api/reportsByLocation?param=${encodeURIComponent(locationParam)}`;
+            const url = `http://localhost:5002/api/reportsByLocation?param=${encodeURIComponent(locationParam)}`;
             const response = await fetch(url);
             const data = await response.json();
 

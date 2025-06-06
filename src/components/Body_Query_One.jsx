@@ -21,7 +21,7 @@ export default function Body_Query_One() {
         }
 
         try {
-        const url = `http://localhost:5004/api/reportsByDate?param=${encodeURIComponent(dateParam)}`; // --> encodeURIComponent(dateParam)
+        const url = `http://localhost:5002/api/reportsByDate?param=${encodeURIComponent(dateParam)}`; // --> encodeURIComponent(dateParam)
 
         const response = await fetch(url); // fetching information from data base
         const data = await response.json();
