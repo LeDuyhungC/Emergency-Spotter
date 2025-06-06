@@ -34,11 +34,9 @@ export default function App() {
             <Route path='/query_Four' element={<QueryFour />} />
             <Route path='/query_Five' element={<QueryFive />} />
             <Route path='/query_Six' element={<QuerySix />} />
-            
+
         </Routes>
     </BrowserRouter>
-
-
     </>
     )
 }
