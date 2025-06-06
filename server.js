@@ -7,7 +7,9 @@ import { handleDateReports } from './src/controller/queryOneController.js'
 import { handleAllUsers } from './src/controller/queryTwoController.js';
 import { handleReportsByLocation } from './src/controller/queryThreeController.js';
 import { handleReportsByEmergencyCount } from './src/controller/queryFourController.js';
-
+import { handleUsersByRoleAndCity } from './src/controller/queryFiveController.js';
+import { submitEmergencyReport } from './src/controller/querySixController.js';
+import mysql from 'mysql2/promise';
 
 // Step 4: Import Database Configuration
 import { connectToDatabase, getConnection } from './dbconfig.js';
@@ -83,6 +85,38 @@ app.get('/api/reportsByEmergencyCount', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// query 5
+app.get('/api/usersByRoleAndCity', async (req, res) => {
+    if (!connection) {
+        console.error('API call to /api/usersByRoleAndCity but database connection is not available.'); //==========> database connection test
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+    }
+    try {
+        const results = await handleUsersByRoleAndCity(req, connection);
+        res.status(200).json(results);
+    } catch (err) {
+        console.error('Route error', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Query 6
+
+app.post('/api/submitEmergencyReport', async (req, res) => {
+    if (!connection) {
+        console.error('API call to /api/submitEmergencyReport but database connection is not available.'); //==========> database connection test
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+    }
+    try {
+        const result = await submitEmergencyReport(req, connection);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Route error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 // handleReportsMadeByUser
 
