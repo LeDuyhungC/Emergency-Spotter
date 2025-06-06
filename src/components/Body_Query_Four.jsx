@@ -21,7 +21,7 @@ export default function Body_Query_Four() {
         }
 
         try {
-            const url = `http://localhost:5004/api/reportsByEmergencyCount?param=${encodeURIComponent(param)}${showAll ? '&showAll=true' : ''}`;
+            const url = `http://localhost:5002/api/reportsByEmergencyCount?param=${encodeURIComponent(param)}${showAll ? '&showAll=true' : ''}`;
             const response = await fetch(url);
             const data = await response.json();
 

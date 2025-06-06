@@ -32,18 +32,15 @@ const formatReport = (tuple) => {
         Report_Date: formattedDate,
         Report_Time: formattedTime,
         Emergency_Description: tuple.EmergencyDescription,
-        Location_Address: tuple.LocationAddress,
+        Location_Address: tuple.LocationAddress
     };
 };
 
 async function handleAllUsers(_req, connection) {
 
     if (!connection) {
-    console.error("Database connection not provided to getAllEmployees");
         throw new Error("Database connection is not available.");
     }
-
-
     const sql = `
     SELECT 
         u.id AS UserId, 
@@ -101,4 +98,4 @@ async function handleReportsMadeByUser(req, connection) {
     }
 };
 
-export { handleReportsMadeByUser, handleAllUsers }; // Export the renamed function
+export { handleReportsMadeByUser, handleAllUsers };
