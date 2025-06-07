@@ -193,7 +193,7 @@ app.post('/api/submitEmergencyReport', async (req, res) => {
 
 
 // Step 9: Start the Server
-const PORT = process.env.PORT || 5004;
+const PORT = process.env.PORT || 5002;
 (async () => {
     await initializeDatabase();
     app.listen(PORT, () => {

@@ -17,9 +17,9 @@ export default function Body_Query_Six() {
       setIsLoading(true);
       try {
         const [usersRes, locationsRes, emergenciesRes] = await Promise.all([
-          fetch('http://localhost:5004/api/users'),
-          fetch('http://localhost:5004/api/locations'),
-          fetch('http://localhost:5004/api/emergencies')
+          fetch('http://localhost:5002/api/users'),
+          fetch('http://localhost:5002/api/locations'),
+          fetch('http://localhost:5002/api/emergencies')
         ]);
         const usersData = await usersRes.json();
         const locationsData = await locationsRes.json();
@@ -59,7 +59,7 @@ export default function Body_Query_Six() {
     }
 
     try {
-      const url = `http://localhost:5004/api/submitEmergencyReport?userId=${encodeURIComponent(userId)}&emergencyId=${encodeURIComponent(emergencyId)}&locationId=${encodeURIComponent(locationId)}`;
+      const url = `http://localhost:5002/api/submitEmergencyReport?userId=${encodeURIComponent(userId)}&emergencyId=${encodeURIComponent(emergencyId)}&locationId=${encodeURIComponent(locationId)}`;
       const response = await fetch(url, { method: 'POST' });
       const text = await response.text();
       console.log('Raw response:', text);
