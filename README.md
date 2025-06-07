@@ -1,4 +1,4 @@
-Emergency Spotter Readme TCSS 445
+#Emergency Spotter Readme TCSS 445
 
 By Duy-Hung Le, Faisal Nur, Abdulrahman Elmi, Nate Almanza
 
