@@ -1,4 +1,3 @@
-
 const submitEmergencyReport = async (req, connection) => {
   const userId = req.query.userId;
   const emergencyId = req.query.emergencyId;
@@ -32,9 +31,25 @@ const submitEmergencyReport = async (req, connection) => {
     if (emergencyRows.length === 0) {
       throw new Error('Emergency ID does not exist.');
     }
-    const [locationRows] = await connection.execute('SELECT Id, Population FROM location WHERE Id = ?', [locationId]);
+    const [locationRows] = await connection.execute('SELECT Id, City_Id, Population FROM location WHERE Id = ?', [locationId]);
     if (locationRows.length === 0) {
       throw new Error('Location ID does not exist.');
+    }
+
+    // Get structure type data for max population check
+    const cityId = locationRows[0].City_Id;
+    const [structureRows] = await connection.execute(
+      'SELECT Id, Max_population FROM structure_type WHERE Id = ?',
+      [cityId]
+    );
+    if (structureRows.length === 0) {
+      throw new Error('Structure Type ID does not exist for this location.');
+    }
+
+    const maxPopulation = structureRows[0].Max_population;
+    const currentPopulation = (locationRows[0].Population || 0) + 1; // Increment location population by 1
+    if (currentPopulation > maxPopulation) {
+      throw new Error('Location population would exceed structure type maximum capacity; cannot submit report.');
     }
 
     // Insert new report
@@ -44,11 +59,10 @@ const submitEmergencyReport = async (req, connection) => {
     );
     const reportId = reportResult.insertId;
 
-    // Update location population (e.g., increment by 1 to track activity)
-    const newPopulation = (locationRows[0].Population || 0) + 1;
+    // Update location population
     await connection.execute(
       'UPDATE location SET Population = ? WHERE Id = ?',
-      [newPopulation, locationId]
+      [currentPopulation, locationId]
     );
 
     // Commit transaction
@@ -58,7 +72,7 @@ const submitEmergencyReport = async (req, connection) => {
       success: true,
       message: 'Emergency report submitted successfully.',
       reportId: reportId,
-      updatedUserReports: newPopulation
+      updatedLocationPopulation: currentPopulation
     };
   } catch (err) {
     // Rollback on error
@@ -69,4 +83,3 @@ const submitEmergencyReport = async (req, connection) => {
 };
 
 export { submitEmergencyReport };
-
