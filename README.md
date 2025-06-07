@@ -1,4 +1,4 @@
-#Emergency Spotter Readme TCSS 445
+# Emergency Spotter Readme TCSS 445
 
 By Duy-Hung Le, Faisal Nur, Abdulrahman Elmi, Nate Almanza
 
@@ -33,27 +33,27 @@ cd emergency-spotter
 
 
 
-# Navigate to backend
+## Navigate to backend
 
 cd backend
 
 
 
-# Install dependencies
+## Install dependencies
 
 npm install
 
-# Create a .env file with your database credentials (see .env.example)
+## Create a .env file with your database credentials (see .env.example)
 
 
 
-# Then, start the server
+## Then, start the server
 
 npm start
 
 
 
-#DEPENDENCIES
+##DEPENDENCIES
 
      bootstrap react-bootstrap 
 
