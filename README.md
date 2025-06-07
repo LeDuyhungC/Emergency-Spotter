@@ -1,4 +1,5 @@
 Emergency Spotter Readme TCSS 445
+
 By Duy-Hung Le, Faisal Nur, Abdulrahman Elmi, Nate Almanza
 
 <p>This project focuses on a web-app that has the function to report emergencies, see emergencies near by and use queries to get information for users' needs.
