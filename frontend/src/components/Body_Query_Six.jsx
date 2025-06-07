@@ -1,126 +1,219 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function Body_Query_Six() {
-  const [userId, setUserId] = useState('');
-  const [emergencyId, setEmergencyId] = useState('');
-  const [locationId, setLocationId] = useState('');
+export default function UserReportsManager() {
+  const [users, setUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState('');
+  const [reports, setReports] = useState([]);
+  const [editingReport, setEditingReport] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [result, setResult] = useState(null);
+  const [success, setSuccess] = useState('');
 
-  const handleSubmit = async (e) => {
+  // Fetch all users
+  useEffect(() => {
+    const loadUsers = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const response = await fetch('http://localhost:5002/api/users');
+        if (!response.ok) throw new Error('Failed to fetch users');
+        const data = await response.json();
+        setUsers(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadUsers();
+  }, []);
+
+  // Fetch reports when user is selected
+  useEffect(() => {
+    if (!selectedUserId) return;
+
+    const loadReports = async () => {
+      setIsLoading(true);
+      setError('');
+      try {
+        const response = await fetch(
+            `http://localhost:5002/api/user-reports/${selectedUserId}`
+        );
+        if (!response.ok) throw new Error('Failed to fetch reports');
+        const data = await response.json();
+        setReports(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadReports();
+  }, [selectedUserId]);
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    setResult(null);
-
-    if (!userId.trim() || isNaN(userId) || Number(userId) <= 0) {
-      setError('Please enter a valid User ID (positive number).');
-      setIsLoading(false);
-      return;
-    }
-    if (!emergencyId.trim() || isNaN(emergencyId) || Number(emergencyId) <= 0) {
-      setError('Please enter a valid Emergency ID (positive number).');
-      setIsLoading(false);
-      return;
-    }
-    if (!locationId.trim() || isNaN(locationId) || Number(locationId) <= 0) {
-      setError('Please enter a valid Location ID (positive number).');
-      setIsLoading(false);
-      return;
-    }
+    setSuccess('');
 
     try {
-      const url = `http://localhost:5004/api/submitEmergencyReport?userId=${encodeURIComponent(userId)}&emergencyId=${encodeURIComponent(emergencyId)}&locationId=${encodeURIComponent(locationId)}`;
-      const response = await fetch(url, { method: 'POST' });
-      const text = await response.text();
-      console.log('Raw response:', text);
+      const formData = new FormData(e.target);
+      const updates = {
+        reportId: editingReport.Report_ID,
+        emergencyTypeId: formData.get('emergencyTypeId'),
+        locationId: formData.get('locationId'),
+        dateTime: formData.get('dateTime')
+      };
 
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (parseErr) {
-        throw new Error('Server did not return valid JSON: ' + text.substring(0, 50));
+      const response = await fetch('http://localhost:5002/api/update-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Update failed');
       }
 
-      if (!response.ok) throw new Error(data.error || 'Transaction failed');
+      // Refresh reports
+      const updatedReports = reports.map(r =>
+          r.Report_ID === editingReport.Report_ID ? {
+            ...r,
+            Emergency_TYPE_ID: updates.emergencyTypeId,
+            Location_ID: updates.locationId,
+            DATE_TIME: updates.dateTime
+          } : r
+      );
 
-      setResult(data);
-      setError('');
+      setReports(updatedReports);
+      setEditingReport(null);
+      setSuccess('Report updated successfully!');
     } catch (err) {
       setError(err.message);
-      setResult({ success: false, message: err.message });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const renderResult = () => {
-    if (!result && !isLoading && !error) return <p>Enter details to submit a report.</p>;
-    if (!result) return null;
+  return (
+      <div className="user-reports-manager">
+        <h1>User Reports Management</h1>
 
-    return (
-      <div className="mt-4">
-        {result.success ? (
-          <p className="success">
-            Transaction Successful: {result.message}<br />
-            Report ID: {result.reportId}<br />
-            Updated User Reports: {result.updatedUserReports}
-          </p>
-        ) : (
-          <p className="error">
-            Transaction Failed: {result.message}
-          </p>
+        {/* User selection */}
+        <div className="form-group">
+          <label>Select User:</label>
+          <select
+              value={selectedUserId}
+              onChange={(e) => setSelectedUserId(e.target.value)}
+              disabled={isLoading}
+          >
+            <option value="">-- Select a user --</option>
+            {users.map(user => (
+                <option key={user.UserId} value={user.UserId}>
+                  {user.First_Name} {user.Last_Name}
+                </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Status messages */}
+        {error && <div className="error">{error}</div>}
+        {success && <div className="success">{success}</div>}
+        {isLoading && <div className="loading">Loading...</div>}
+
+        {/* Reports table */}
+        {reports.length > 0 && (
+            <div className="reports-container">
+              <h2>User Reports</h2>
+              <table className="reports-table">
+                <thead>
+                <tr>
+                  <th>Report ID</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Emergency</th>
+                  <th>Location</th>
+                  <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {reports.map(report => (
+                    <tr key={report.Report_ID}>
+                      <td>{report.Report_ID}</td>
+                      <td>{report.Report_Date}</td>
+                      <td>{report.Report_Time}</td>
+                      <td>{report.Emergency_Description}</td>
+                      <td>{report.Location_Address}</td>
+                      <td>
+                        <button
+                            onClick={() => setEditingReport(report)}
+                            disabled={isLoading}
+                        >
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                ))}
+                </tbody>
+              </table>
+            </div>
+        )}
+
+        {/* Edit Form */}
+        {editingReport && (
+            <div className="edit-form">
+              <h2>Edit Report #{editingReport.Report_ID}</h2>
+              <form onSubmit={handleUpdate}>
+                <div className="form-group">
+                  <label>Emergency Type ID:</label>
+                  <input
+                      type="number"
+                      name="emergencyTypeId"
+                      defaultValue={editingReport.Emergency_TYPE_ID}
+                      required
+                      min="1"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Location ID:</label>
+                  <input
+                      type="number"
+                      name="locationId"
+                      defaultValue={editingReport.Location_ID}
+                      required
+                      min="1"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Date & Time:</label>
+                  <input
+                      type="datetime-local"
+                      name="dateTime"
+                      defaultValue={editingReport.DATE_TIME ?
+                          editingReport.DATE_TIME.replace(' ', 'T').substring(0, 16) : ''}
+                      required
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button type="submit" disabled={isLoading}>
+                    {isLoading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                  <button
+                      type="button"
+                      onClick={() => setEditingReport(null)}
+                      disabled={isLoading}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
         )}
       </div>
-    );
-  };
-
-  return (
-    <div className="query-container">
-      <h1>Submit Emergency Report (Transaction)</h1>
-      <form onSubmit={handleSubmit} className="query-form">
-        <div className="form-group">
-          <label htmlFor="userId">Enter User ID:</label>
-          <input
-            type="text"
-            id="userId"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            placeholder="e.g., 1"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="emergencyId">Enter Emergency ID:</label>
-          <input
-            type="text"
-            id="emergencyId"
-            value={emergencyId}
-            onChange={(e) => setEmergencyId(e.target.value)}
-            placeholder="e.g., 1"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="locationId">Enter Location ID:</label>
-          <input
-            type="text"
-            id="locationId"
-            value={locationId}
-            onChange={(e) => setLocationId(e.target.value)}
-            placeholder="e.g., 1"
-          />
-        </div>
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Submitting...' : 'Submit Report'}
-        </button>
-        <a href="home">Back to Main Page</a>
-      </form>
-      <div className="results-container">
-        {isLoading && <p>Processing transaction...</p>}
-        {error && <p className="error">{error}</p>}
-        {!isLoading && renderResult()}
-      </div>
-    </div>
   );
 }
-

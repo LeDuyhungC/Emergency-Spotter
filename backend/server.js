@@ -12,7 +12,7 @@ import { handleReportsMadeByUser } from './controller/queryTwoController.js';
 import { handleReportsByLocation } from './controller/queryThreeController.js';
 import { handleReportsByEmergencyCount } from './controller/queryFourController.js';
 import { handleUsersByRoleAndCity } from './controller/queryFiveController.js';
-import { submitEmergencyReport } from './controller/querySixController.js';
+import {getReportsByUser, getAllUsers, updateUserReport} from './controller/querySixController.js';
 import mysql from 'mysql2/promise';
 
 
@@ -156,22 +156,53 @@ app.get('/api/usersByRoleAndCity', async (req, res) => {
 });
 
 // Query 6
+//
+// app.post('/api/', async (req, res) => {
+//     if (!connection) {
+//         console.error('API call to /api/submitEmergencyReport but database connection is not available.'); //==========> database connection test
+//         return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+//     }
+//     try {
+//         const result = await submitEmergencyReport(req, connection);
+//         res.status(200).json(result);
+//     } catch (err) {
+//         console.error('Route error:', err);
+//         res.status(500).json({ error: err.message });
+//     }
+// });
 
-app.post('/api/submitEmergencyReport', async (req, res) => {
-    if (!connection) {
-        console.error('API call to /api/submitEmergencyReport but database connection is not available.'); //==========> database connection test
-        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
-    }
+// Get all users
+app.get('/api/users', async (req, res) => {
     try {
-        const result = await submitEmergencyReport(req, connection);
-        res.status(200).json(result);
+        const users = await getAllUsers(connection);
+        res.json(users);
     } catch (err) {
-        console.error('Route error:', err);
         res.status(500).json({ error: err.message });
     }
 });
 
+// Get reports by user ID
+app.get('/api/user-reports/:userId', async (req, res) => {
+    try {
+        const reports = await getReportsByUser(req.params.userId, connection);
+        res.json(reports);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
+// Update report
+app.post('/api/update-report', async (req, res) => {
+    if (!connection) {
+        return res.status(503).json({ error: 'Database connection not available' });
+    }
+    try {
+        const result = await updateUserReport(req, connection);
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 // handleReportsMadeByUser
 
 
