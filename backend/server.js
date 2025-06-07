@@ -12,8 +12,7 @@ import { handleReportsMadeByUser } from './controller/queryTwoController.js';
 import { handleReportsByLocation } from './controller/queryThreeController.js';
 import { handleReportsByEmergencyCount } from './controller/queryFourController.js';
 import { handleUsersByRoleAndCity } from './controller/queryFiveController.js';
-import {getReportsByUser, getAllUsers, updateUserReport} from './controller/querySixController.js';
-import mysql from 'mysql2/promise';
+import {submitEmergencyReport} from './controller/querySixController.js';
 
 
 // Step 4: Import Database Configuration
@@ -113,19 +112,8 @@ app.get('/api/reportsByUserId', async (req, res) => {
     }
 });
 
-//============================================================[Query 3]======================================================================
-// In server.js, within the route definitions
-app.get('/api/reportsByEmergencyCount', async (req, res) => {
-    try {
-        const result = await handleReportsByEmergencyCount(req, connection);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('Route error:', err);
-        res.status(500).json({ error: err.message });
-    }
-});
 
-//============================================================[Query 4]=======================================================================
+//============================================================[Query 3]=======================================================================
 app.get('/api/reportsByLocation', async (req, res) => {
     if (!connection) {
         console.error('API call to /api/reportsByLocation but database connection is not available.'); //==========> database connection test
@@ -140,7 +128,19 @@ app.get('/api/reportsByLocation', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
-// query 5
+
+//============================================================[Query 4]======================================================================
+app.get('/api/reportsByEmergencyCount', async (req, res) => {
+    try {
+        const result = await handleReportsByEmergencyCount(req, connection);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Route error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+//============================================================[Query 5]======================================================================
+
 app.get('/api/usersByRoleAndCity', async (req, res) => {
     if (!connection) {
         console.error('API call to /api/usersByRoleAndCity but database connection is not available.'); //==========> database connection test
@@ -155,56 +155,78 @@ app.get('/api/usersByRoleAndCity', async (req, res) => {
     }
 });
 
-// Query 6
-//
-// app.post('/api/', async (req, res) => {
-//     if (!connection) {
-//         console.error('API call to /api/submitEmergencyReport but database connection is not available.'); //==========> database connection test
-//         return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
-//     }
-//     try {
-//         const result = await submitEmergencyReport(req, connection);
-//         res.status(200).json(result);
-//     } catch (err) {
-//         console.error('Route error:', err);
-//         res.status(500).json({ error: err.message });
-//     }
-// });
+//============================================================[Query 6]======================================================================
 
-// Get all users
 app.get('/api/users', async (req, res) => {
-    try {
-        const users = await getAllUsers(connection);
-        res.json(users);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Get reports by user ID
-app.get('/api/user-reports/:userId', async (req, res) => {
-    try {
-        const reports = await getReportsByUser(req.params.userId, connection);
-        res.json(reports);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Update report
-app.post('/api/update-report', async (req, res) => {
     if (!connection) {
-        return res.status(503).json({ error: 'Database connection not available' });
+        console.error('API call to /api/users but database connection is not available.');
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
     }
     try {
-        const result = await updateUserReport(req, connection);
-        res.json(result);
+        const [rows] = await connection.execute('SELECT Id, First_Name, Last_Name, Email FROM users ORDER BY Id');
+        res.status(200).json(rows);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Error fetching users:', err);
+        res.status(500).json({ error: 'Failed to fetch users: ' + err.message });
     }
 });
-// handleReportsMadeByUser
 
+app.get('/api/locations', async (req, res) => {
+    if (!connection) {
+        console.error('API call to /api/locations but database connection is not available.');
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+    }
+    try {
+        const [rows] = await connection.execute('SELECT Id, Address FROM location ORDER BY Id');
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error('Error fetching locations:', err);
+        res.status(500).json({ error: 'Failed to fetch locations: ' + err.message });
+    }
+});
+
+app.get('/api/emergencies', async (req, res) => {
+    if (!connection) {
+        console.error('API call to /api/emergencies but database connection is not available.');
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+    }
+    try {
+        const [rows] = await connection.execute('SELECT Id, Description FROM emergencies ORDER BY Id');
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error('Error fetching emergencies:', err);
+        res.status(500).json({ error: 'Failed to fetch emergencies: ' + err.message });
+    }
+});
+
+
+app.post('/api/submitEmergencyReport', async (req, res) => {
+    if (!connection) {
+        console.error('API call to /api/submitEmergencyReport but database connection is not available.');
+        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+    }
+    try {
+        // Validate query parameters for userId, emergencyId, and locationId
+        const { userId, emergencyId, locationId } = req.query;
+        if (!userId || !emergencyId || !locationId) {
+            return res.status(400).json({ error: 'Missing required query parameters: userId, emergencyId, and locationId are all required.' });
+        }
+        if (isNaN(userId) || Number(userId) <= 0 || isNaN(emergencyId) || Number(emergencyId) <= 0 || isNaN(locationId) || Number(locationId) <= 0) {
+            return res.status(400).json({ error: 'Invalid query parameters: userId, emergencyId, and locationId must be positive numbers.' });
+        }
+
+        const result = await submitEmergencyReport(req, connection);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Route error:', err);
+        // Customize response based on error type
+        if (err.message.includes('does not exist') || err.message.includes('would exceed')) {
+            res.status(400).json({ error: err.message });
+        } else {
+            res.status(500).json({ error: 'Transaction failed: ' + err.message });
+        }
+    }
+});
 
 // Step 9: Start the Server
 const PORT = process.env.PORT || 5002;

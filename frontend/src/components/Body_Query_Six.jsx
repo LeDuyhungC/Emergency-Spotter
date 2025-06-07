@@ -1,219 +1,200 @@
 import { useState, useEffect } from 'react';
 
-export default function UserReportsManager() {
+export default function Body_Query_Six() {
+  const [userId, setUserId] = useState('');
+  const [emergencyId, setEmergencyId] = useState('');
+  const [locationId, setLocationId] = useState('');
   const [users, setUsers] = useState([]);
-  const [selectedUserId, setSelectedUserId] = useState('');
-  const [reports, setReports] = useState([]);
-  const [editingReport, setEditingReport] = useState(null);
+  const [locations, setLocations] = useState([]);
+  const [emergencies, setEmergencies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [result, setResult] = useState(null);
 
-  // Fetch all users
+  // Fetch dropdown data on component mount
   useEffect(() => {
-    const loadUsers = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
-      setError('');
       try {
-        const response = await fetch('http://localhost:5002/api/users');
-        if (!response.ok) throw new Error('Failed to fetch users');
-        const data = await response.json();
-        setUsers(data);
+        const [usersRes, locationsRes, emergenciesRes] = await Promise.all([
+          fetch('http://localhost:5002/api/users'),
+          fetch('http://localhost:5002/api/locations'),
+          fetch('http://localhost:5002/api/emergencies')
+        ]);
+        const usersData = await usersRes.json();
+        const locationsData = await locationsRes.json();
+        const emergenciesData = await emergenciesRes.json();
+        setUsers(usersData);
+        setLocations(locationsData);
+        setEmergencies(emergenciesData);
       } catch (err) {
-        setError(err.message);
+        setError('Failed to load dropdown data: ' + err.message);
       } finally {
         setIsLoading(false);
       }
     };
-    loadUsers();
+    fetchData();
   }, []);
 
-  // Fetch reports when user is selected
-  useEffect(() => {
-    if (!selectedUserId) return;
-
-    const loadReports = async () => {
-      setIsLoading(true);
-      setError('');
-      try {
-        const response = await fetch(
-            `http://localhost:5002/api/user-reports/${selectedUserId}`
-        );
-        if (!response.ok) throw new Error('Failed to fetch reports');
-        const data = await response.json();
-        setReports(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadReports();
-  }, [selectedUserId]);
-
-  const handleUpdate = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    setSuccess('');
+    setResult(null);
+
+    if (!userId.trim() || isNaN(userId) || Number(userId) <= 0) {
+      setError('Please enter or select a valid User ID (positive number).');
+      setIsLoading(false);
+      return;
+    }
+    if (!emergencyId.trim() || isNaN(emergencyId) || Number(emergencyId) <= 0) {
+      setError('Please enter or select a valid Emergency ID (positive number).');
+      setIsLoading(false);
+      return;
+    }
+    if (!locationId.trim() || isNaN(locationId) || Number(locationId) <= 0) {
+      setError('Please enter or select a valid Location ID (positive number).');
+      setIsLoading(false);
+      return;
+    }
 
     try {
-      const formData = new FormData(e.target);
-      const updates = {
-        reportId: editingReport.Report_ID,
-        emergencyTypeId: formData.get('emergencyTypeId'),
-        locationId: formData.get('locationId'),
-        dateTime: formData.get('dateTime')
-      };
+      const url = `http://localhost:5002/api/submitEmergencyReport?userId=${encodeURIComponent(userId)}&emergencyId=${encodeURIComponent(emergencyId)}&locationId=${encodeURIComponent(locationId)}`;
+      const response = await fetch(url, { method: 'POST' });
+      const text = await response.text();
+      console.log('Raw response:', text);
 
-      const response = await fetch('http://localhost:5002/api/update-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Update failed');
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseErr) {
+        throw new Error('Server did not return valid JSON: ' + text.substring(0, 50));
       }
 
-      // Refresh reports
-      const updatedReports = reports.map(r =>
-          r.Report_ID === editingReport.Report_ID ? {
-            ...r,
-            Emergency_TYPE_ID: updates.emergencyTypeId,
-            Location_ID: updates.locationId,
-            DATE_TIME: updates.dateTime
-          } : r
-      );
+      if (!response.ok) throw new Error(data.error || 'Transaction failed');
 
-      setReports(updatedReports);
-      setEditingReport(null);
-      setSuccess('Report updated successfully!');
+      setResult(data);
+      setError('');
     } catch (err) {
       setError(err.message);
+      setResult({ success: false, message: err.message });
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-      <div className="user-reports-manager">
-        <h1>User Reports Management</h1>
+  const renderResult = () => {
+    if (!result && !isLoading && !error) return <p className="text-gray-600">Enter or select details to submit a report.</p>;
+    if (!result) return null;
 
-        {/* User selection */}
-        <div className="form-group">
-          <label>Select User:</label>
-          <select
-              value={selectedUserId}
-              onChange={(e) => setSelectedUserId(e.target.value)}
-              disabled={isLoading}
-          >
-            <option value="">-- Select a user --</option>
-            {users.map(user => (
-                <option key={user.UserId} value={user.UserId}>
-                  {user.First_Name} {user.Last_Name}
-                </option>
-            ))}
-          </select>
+    return (
+        <div className="mt-4">
+          {result.success ? (
+              <p className="text-green-600">
+                Transaction Successful: {result.message}<br />
+                Report ID: {result.reportId}<br />
+                Updated User Reports: {result.updatedUserReports}
+              </p>
+          ) : (
+              <p className="text-red-600">
+                {/* Transaction Failed: {result.message}*/}
+              </p>
+          )}
         </div>
+    );
+  };
 
-        {/* Status messages */}
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
-        {isLoading && <div className="loading">Loading...</div>}
-
-        {/* Reports table */}
-        {reports.length > 0 && (
-            <div className="reports-container">
-              <h2>User Reports</h2>
-              <table className="reports-table">
-                <thead>
-                <tr>
-                  <th>Report ID</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Emergency</th>
-                  <th>Location</th>
-                  <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {reports.map(report => (
-                    <tr key={report.Report_ID}>
-                      <td>{report.Report_ID}</td>
-                      <td>{report.Report_Date}</td>
-                      <td>{report.Report_Time}</td>
-                      <td>{report.Emergency_Description}</td>
-                      <td>{report.Location_Address}</td>
-                      <td>
-                        <button
-                            onClick={() => setEditingReport(report)}
-                            disabled={isLoading}
-                        >
-                          Edit
-                        </button>
-                      </td>
-                    </tr>
-                ))}
-                </tbody>
-              </table>
-            </div>
-        )}
-
-        {/* Edit Form */}
-        {editingReport && (
-            <div className="edit-form">
-              <h2>Edit Report #{editingReport.Report_ID}</h2>
-              <form onSubmit={handleUpdate}>
-                <div className="form-group">
-                  <label>Emergency Type ID:</label>
-                  <input
-                      type="number"
-                      name="emergencyTypeId"
-                      defaultValue={editingReport.Emergency_TYPE_ID}
-                      required
-                      min="1"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Location ID:</label>
-                  <input
-                      type="number"
-                      name="locationId"
-                      defaultValue={editingReport.Location_ID}
-                      required
-                      min="1"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Date & Time:</label>
-                  <input
-                      type="datetime-local"
-                      name="dateTime"
-                      defaultValue={editingReport.DATE_TIME ?
-                          editingReport.DATE_TIME.replace(' ', 'T').substring(0, 16) : ''}
-                      required
-                  />
-                </div>
-
-                <div className="form-actions">
-                  <button type="submit" disabled={isLoading}>
-                    {isLoading ? 'Saving...' : 'Save Changes'}
-                  </button>
-                  <button
-                      type="button"
-                      onClick={() => setEditingReport(null)}
-                      disabled={isLoading}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
-        )}
+  return (
+      <div className="query-container">
+        <h1 className="text-2xl font-bold mb-4 text-center">Submit Emergency Report</h1>
+        <div className="query-form space-y-4">
+          <div>
+            <label htmlFor="userId" className="block text-sm font-medium text-gray-700">Select or Enter User ID:</label>
+            <select
+                id="userId"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select a User</option>
+              {users.map(user => (
+                  <option key={user.Id} value={user.Id}>
+                    {user.Id} - {user.First_Name} {user.Last_Name} ({user.Email})
+                  </option>
+              ))}
+            </select>
+            <input
+                type="text"
+                id="userIdInput"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                placeholder="Or type User ID (e.g., 1)"
+                className="mt-2 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="emergencyId" className="block text-sm font-medium text-gray-700">Select or Enter Emergency ID:</label>
+            <select
+                id="emergencyId"
+                value={emergencyId}
+                onChange={(e) => setEmergencyId(e.target.value)}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select an Emergency</option>
+              {emergencies.map(emergency => (
+                  <option key={emergency.Id} value={emergency.Id}>
+                    {emergency.Id} - {emergency.Description}
+                  </option>
+              ))}
+            </select>
+            <input
+                type="text"
+                id="emergencyIdInput"
+                value={emergencyId}
+                onChange={(e) => setEmergencyId(e.target.value)}
+                placeholder="Or type Emergency ID (e.g., 1)"
+                className="mt-2 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="locationId" className="block text-sm font-medium text-gray-700">Select or Enter Location ID:</label>
+            <select
+                id="locationId"
+                value={locationId}
+                onChange={(e) => setLocationId(e.target.value)}
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Select a Location</option>
+              {locations.map(location => (
+                  <option key={location.Id} value={location.Id}>
+                    {location.Id} - {location.Address}
+                  </option>
+              ))}
+            </select>
+            <input
+                type="text"
+                id="locationIdInput"
+                value={locationId}
+                onChange={(e) => setLocationId(e.target.value)}
+                placeholder="Or type Location ID (e.g., 1)"
+                className="mt-2 block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isLoading}
+              className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+          >
+            {isLoading ? 'Submitting...' : 'Submit Report'}
+          </button>
+          <a href="home" className="block text-center text-blue-500 hover:underline">Back to Main Page</a>
+        </div>
+        <div className="results-container mt-4">
+          {isLoading && <p className="text-gray-600">Processing transaction...</p>}
+          {error && <p className="text-red-600">{error}</p>}
+          {!isLoading && renderResult()}
+        </div>
       </div>
   );
 }

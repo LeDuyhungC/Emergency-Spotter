@@ -1,5 +1,4 @@
 //Le
-// src/pages/Body_Query_One.jsx
 import { useState } from 'react';
 
 export default function Body_Query_One() {
