@@ -1,12 +1,25 @@
-# React + Vite
+Emergency Spotter Readme TCSS 445
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+By Duy-Hung Le, Faisal Nur, Abdulrahman Elmi, Nate Almanza
 
-Currently, two official plugins are available:
+<p>This project focuses on a web-app that has the function to report emergencies, see emergencies near by and use queries to get information for users' needs.
+The Technologies we used were react-vite for front end dynamic interactions for users, node express js and MariaDB for backend use.
+API's that were used are the navigator and geocoder from google maps</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Functions and Features:
 
-## Expanding the ESLint configuration
+Map that shows real time location of user making identifying and reporting emergencies easier in you area.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Report that submits to the database for later query use.
+
+Query 1: Give a date and return all reports submitted on that day.
+
+Query 2: Give a User and return all reports submitted from that user.
+
+Query 3: Gives a location and returns all reports in that location.
+
+Query 4: Shows all emergency types and the amount of reports with the same emergency type.
+
+Query 5: Enter a role then the city Id to return the Users that are in the city Id
+
+Query 6: Update population in a location, if max locaton then it will rollback.
