@@ -36,7 +36,21 @@ export default function Body_Home() {
 
     return (
         <>
-        <Body_Home_Map addresses={addresses}/>
+            <div className="introduction-container">
+                <div>
+                    <h4>Emergency Spotter</h4>
+                <p>
+                    Welcome to Emergency Spotter!
+                    This is the group 6 database project, Emergency Spotter developed by Duy-Hung Le, Faisal Nur, and 
+                    Abdulrahman Elmi. Emergency Spotter’s 
+                    mission is to provide a web application that enables first responders or civilians to report
+                    their emergency findings to a web app, so that it will be notified to others using this web
+                    application.
+                </p>
+
+                </div>
+            </div>
+            <Body_Home_Map addresses={addresses}/>
         </>
     );
 };
