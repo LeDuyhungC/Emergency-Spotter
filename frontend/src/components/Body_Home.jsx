@@ -35,6 +35,8 @@ export default function Body_Home() {
   if (addressesError) return <div>Error: {addressesError}</div>;
 
     return (
+        <>
         <Body_Home_Map addresses={addresses}/>
+        </>
     );
 };

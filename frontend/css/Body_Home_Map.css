@@ -3,8 +3,8 @@
     border: 1px solid #ddd;
     border-radius: 12px;
     padding: 30px; 
-    max-width: 675px;
-    max-height: 600px;
+    max-width: 650px;
+    max-height: 500px;
     margin: 0 auto;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -13,11 +13,20 @@
     color: black;
 }
 .map-container {
-  width: 100%;
-  height: 100vh;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
 }
 .map {
     width: 100%;
     height: 100vh;
     max-height: 500px;
+}
+
+.key-for-map {
+    text-align: center;
+}
+
+h4 {
+    text-align: center;
 }
