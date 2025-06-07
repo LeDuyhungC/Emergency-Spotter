@@ -22,7 +22,7 @@ const formatReport = (tuple) => {
         const seconds = String(dt.getSeconds()).padStart(2, '0');
         formattedTime = `${hours}:${minutes}:${seconds}`;
         } else {
-        console.warn(`Invalid date format received for DATE_TIME: ${tuple.DATE_TIME}`);
+            console.warn(`Invalid date format received for DATE_TIME: ${tuple.DATE_TIME}`);
         }
     }
 

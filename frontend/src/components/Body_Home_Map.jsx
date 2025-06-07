@@ -1,3 +1,4 @@
+//Le
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import { useState, useMemo, useEffect } from "react";
 import "/frontend/css/Body_Home_Map.css";
@@ -95,7 +96,7 @@ export default function Body_Home_Map( { addresses }) {
 
     return (
         <>
-            <h2>Map</h2>
+            <h4>Emergency Map</h4>
 
             <div className="map-container">
                 <GoogleMap zoom={10} center={center} mapContainerClassName="map" options={options}>
@@ -121,6 +122,10 @@ export default function Body_Home_Map( { addresses }) {
                         />
                     )}
                 </GoogleMap>
+            </div>
+            <div className="key-for-map"> 
+                Yellow Circle: Current/Preset Location |
+                Red Pins: Emergencies
             </div>
         </>
     )

@@ -25,7 +25,7 @@ export default function Body_Query_UsersByRoleAndCity() {
     }
 
     try {
-      const url = `http://localhost:5004/api/usersByRoleAndCity?role=${encodeURIComponent(roleParam)}&cityId=${encodeURIComponent(cityIdParam)}`;
+      const url = `http://localhost:5002/api/usersByRoleAndCity?role=${encodeURIComponent(roleParam)}&cityId=${encodeURIComponent(cityIdParam)}`;
       const response = await fetch(url);
       // Log the raw response for debugging
       const text = await response.text();
@@ -58,7 +58,7 @@ export default function Body_Query_UsersByRoleAndCity() {
     const headers = ['ID', 'First_Name', 'Last_Name', 'Role', 'Address', 'City_ID'];
 
     return (
-      <table>
+      <table className="table table-dark table-striped table-hover">
         <thead>
           <tr>
             {headers.map(header => <th key={header}>{header.replace(/_/g, ' ').toUpperCase()}</th>)}
@@ -83,7 +83,7 @@ export default function Body_Query_UsersByRoleAndCity() {
   return (
     <div className="query-container">
       <h1>Search Users by Role and City</h1>
-      <form onSubmit={handleSearch} className="query-form">
+      <form onSubmit={handleSearch} className="query-form mb-4">
         <div className="form-group">
           <label htmlFor="roleParam">Enter Role:</label>
           <input
@@ -104,7 +104,7 @@ export default function Body_Query_UsersByRoleAndCity() {
             placeholder="e.g., 1"
           />
         </div>
-        <button type="submit" disabled={isLoading}>
+        <button type="submit" className="btn btn-primary mt-3" disabled={isLoading}>
           {isLoading ? 'Searching...' : 'Search'}
         </button>
         <a href="home">Back to Main Page</a>
@@ -112,7 +112,11 @@ export default function Body_Query_UsersByRoleAndCity() {
       <div className="results-container">
         {isLoading && <p>Loading results...</p>}
         {error && <p className="error">{error}</p>}
-        {!isLoading && renderTable()}
+        {!isLoading && (
+            <div className='table-responsive'>
+                {renderTable()}
+            </div>
+        )}
       </div>
     </div>
   );

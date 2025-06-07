@@ -3,11 +3,8 @@ header {
     display: flex;
     justify-content:space-between;
     align-items: center;
-    background-color: #213547;
-    color: #f9f9f9;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    box-shadow: 4px 4px 4px 0px rgba(90, 171, 194, 0.411);
 }
 
 header > div {
@@ -40,7 +37,6 @@ header > nav > ul > li{
 
 a {
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.87);
     text-decoration: inherit;
 }
 a:hover {

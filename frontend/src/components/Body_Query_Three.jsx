@@ -42,7 +42,7 @@ export default function Body_Query_Three() {
         const headers = Object.keys(results[0]);
 
         return (
-            <table>
+            <table className="table table-dark table-striped table-hover">
                 <thead>
                 <tr>
                     {headers.map(header => <th key={header}>{header.replace(/_/g, ' ').toUpperCase()}</th>)}
@@ -61,8 +61,8 @@ export default function Body_Query_Three() {
 
     return (
         <div className="query-container">
-            <h1>Info of Reports by Location</h1>
-            <form onSubmit={handleSearch} className="query-form">
+            <h3>Info of Reports by Location</h3>
+            <form onSubmit={handleSearch} className="query-form mb-4">
                 <div className="form-group">
                     <label htmlFor="locationParam">Enter Location:</label>
                     <input
@@ -73,13 +73,17 @@ export default function Body_Query_Three() {
                         placeholder="e.g., 123 Main St"
                     />
                 </div>
-                <button type="submit" disabled={isLoading}>
+                <button type="submit" className="btn btn-primary mt-3" disabled={isLoading}>
                     {isLoading ? 'Searching...' : 'Search'}
                 </button>
             </form>
             <div className="results-container">
                 {isLoading && <p>Loading results...</p>}
-                {!isLoading && renderTable()}
+                {!isLoading && (
+                    <div className='table-responsive'>
+                        {renderTable()}
+                    </div>
+                )}
             </div>
         </div>
     );

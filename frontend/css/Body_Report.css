@@ -5,5 +5,5 @@ div {
 
 .report_div {
     justify-items: center;
-    background-color: rgba(67, 66, 66, 0.551);
+    padding: 5%;
 }
