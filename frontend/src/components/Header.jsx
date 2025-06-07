@@ -19,7 +19,6 @@ export default function Header() {
             <nav>
                 <ul>
                     <li><Link to = "/home">Home</Link></li>
-                    <li><Link to = "/aboutUs">About Us</Link></li>
                     <li
                         className="dropdown-container"
                         onMouseEnter={() => setDropDown(true)}
@@ -29,7 +28,6 @@ export default function Header() {
                         <Query_Dropdown isOpen={isDropDown} />
                     </li>
                     <li><Link to = "/report">Report</Link></li>
-                    <li><Link to = "/functions">Functions</Link></li>
                 </ul>
             </nav>
         </header>
