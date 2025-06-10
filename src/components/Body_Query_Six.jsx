@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 
 export default function Body_Query_Six() {
@@ -59,7 +60,7 @@ export default function Body_Query_Six() {
     }
 
     try {
-      const url = `http://localhost:5004/api/submitEmergencyReport?userId=${encodeURIComponent(userId)}&emergencyId=${encodeURIComponent(emergencyId)}&locationId=${encodeURIComponent(locationId)}`;
+      const url = `http://localhost:5004/api/updateLocationPopulation?userId=${encodeURIComponent(userId)}&emergencyId=${encodeURIComponent(emergencyId)}&locationId=${encodeURIComponent(locationId)}`;
       const response = await fetch(url, { method: 'POST' });
       const text = await response.text();
       console.log('Raw response:', text);
@@ -84,20 +85,20 @@ export default function Body_Query_Six() {
   };
 
   const renderResult = () => {
-    if (!result && !isLoading && !error) return <p className="text-gray-600">Enter or select details to submit a report.</p>;
+    if (!result && !isLoading && !error) return <p className="text-gray-600">Enter or select details to update population.</p>;
     if (!result) return null;
 
     return (
       <div className="mt-4">
         {result.success ? (
           <p className="text-green-600">
-            Transaction Successful: {result.message}<br />
-            Report ID: {result.reportId}<br />
-            Updated User Reports: {result.updatedUserReports}
+            Population Updated Successfully: {result.message}<br />
+            Location ID: {result.locationId}<br />
+            New Population: {result.updatedPopulation}
           </p>
         ) : (
           <p className="text-red-600">
-           {/* Transaction Failed: {result.message}*/}
+           {/**Transaction Failed: {result.message}*/}
           </p>
         )}
       </div>
@@ -106,7 +107,7 @@ export default function Body_Query_Six() {
 
   return (
     <div className="query-container">
-      <h1 className="text-2xl font-bold mb-4 text-center">Submit Emergency Report</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">Update Location Population</h1>
       <div className="query-form space-y-4">
         <div>
           <label htmlFor="userId" className="block text-sm font-medium text-gray-700">Select or Enter User ID:</label>
@@ -186,7 +187,7 @@ export default function Body_Query_Six() {
           disabled={isLoading}
           className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
         >
-          {isLoading ? 'Submitting...' : 'Submit Report'}
+          {isLoading ? 'Updating...' : 'Update Population'}
         </button>
         <a href="home" className="block text-center text-blue-500 hover:underline">Back to Main Page</a>
       </div>

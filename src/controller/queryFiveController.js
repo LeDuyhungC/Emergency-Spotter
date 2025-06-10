@@ -1,55 +1,46 @@
-const formatUser = (tuple) => {
+const formatAddressRow = (row) => {
   return {
-    ID: tuple.Id,
-    First_Name: tuple.First_Name,
-    Last_Name: tuple.Last_Name,
-    Role: tuple.Role,
-    Address: tuple.Address,
-    City_ID: tuple.City_Id
+    Address: row.Address,
+    Population: row.Population,
+    Max_Population: row.Max_population,
+    Difference: row.Difference
   };
 };
 
-async function handleUsersByRoleAndCity(req, connection) {
-  const roleParam = req.query.role;
-  const cityIdParam = req.query.cityId;
+async function handleAddressesByCityOrState(req, connection) {
+  const cityOrState = req.query.cityOrState;
 
   if (!connection) {
-    console.error("Database connection not provided to handleUsersByRoleAndCity");
+    console.error("Database connection not provided to handleAddressesByCityOrState");
     throw new Error("Database connection is not available.");
   }
 
-  if (!roleParam) {
-    throw new Error('Role parameter is required.');
-  }
-  if (!cityIdParam || isNaN(cityIdParam) || Number(cityIdParam) <= 0) {
-    throw new Error('Valid City ID is required.');
+  if (!cityOrState) {
+    throw new Error('City or state parameter is required.');
   }
 
-  const baseQuery = `
+  const query = `
     SELECT 
-      u.Id, 
-      u.First_Name, 
-      u.Last_Name, 
-      u.Role, 
-      u.Address, 
-      l.City_Id
-    FROM users u
-    JOIN location l ON u.Address = l.Address
+      l.Address,
+      l.Population,
+      s.Max_population,
+      (s.Max_population - l.Population) AS Difference
+    FROM location l
+    JOIN structure_type s ON l.City_Id = s.Id
+    WHERE l.Address LIKE ?
   `;
-
-  const sql = `${baseQuery} WHERE u.Role LIKE ? AND l.City_Id = ? ORDER BY u.Id`;
-  const params = [`%${roleParam}%`, cityIdParam];
+  const params = [`%${cityOrState}%`];
 
   try {
-    const [rows] = await connection.execute(sql, params);
+    const [rows] = await connection.execute(query, params);
     if (rows.length === 0) {
-      throw new Error('No users found for the specified role and city.');
+      throw new Error('No addresses found for the specified city or state.');
     }
-    return rows.map(formatUser);
+    return rows.map(formatAddressRow);
   } catch (err) {
-    console.error(`Error executing query by role and city:`, err);
+    console.error(`Error executing query by city or state:`, err);
     throw new Error(`Failed to retrieve data: ${err.message}`);
   }
 }
 
-export { handleUsersByRoleAndCity };
+export { handleAddressesByCityOrState };

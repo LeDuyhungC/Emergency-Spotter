@@ -1,8 +1,9 @@
+
 import { useState } from 'react';
 
-export default function Body_Query_UsersByRoleAndCity() {
-  const [roleParam, setRoleParam] = useState('');
-  const [cityIdParam, setCityIdParam] = useState('');
+
+export default function Body_Query_AddressesByCityOrState() {
+  const [cityOrState, setCityOrState] = useState('');
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -13,25 +14,18 @@ export default function Body_Query_UsersByRoleAndCity() {
     setError('');
     setResults([]);
 
-    if (!roleParam.trim()) {
-      setError('Please enter a role.');
-      setIsLoading(false);
-      return;
-    }
-    if (!cityIdParam.trim() || isNaN(cityIdParam) || Number(cityIdParam) <= 0) {
-      setError('Please enter a valid City ID (positive number).');
+    if (!cityOrState.trim()) {
+      setError('Please enter a city or state.');
       setIsLoading(false);
       return;
     }
 
     try {
-      const url = `http://localhost:5004/api/usersByRoleAndCity?role=${encodeURIComponent(roleParam)}&cityId=${encodeURIComponent(cityIdParam)}`;
+      const url = `http://localhost:5004/api/addressesByCityOrState?cityOrState=${encodeURIComponent(cityOrState)}`;
       const response = await fetch(url);
-      // Log the raw response for debugging
       const text = await response.text();
       console.log('Raw response:', text);
-      
-      // Attempt to parse as JSON
+
       let data;
       try {
         data = JSON.parse(text);
@@ -51,28 +45,26 @@ export default function Body_Query_UsersByRoleAndCity() {
   };
 
   const renderTable = () => {
-    if (results.length === 0 && !isLoading && !error) return <p>No users found or search not yet performed.</p>;
+    if (results.length === 0 && !isLoading && !error) return <p>No addresses found or search not yet performed.</p>;
     if (results.length === 0 && !isLoading && error) return null;
     if (results.length === 0) return null;
 
-    const headers = ['ID', 'First_Name', 'Last_Name', 'Role', 'Address', 'City_ID'];
+    const headers = ['Address', 'Population', 'Max Population', 'Difference'];
 
     return (
-      <table>
+      <table className="results-table">
         <thead>
           <tr>
-            {headers.map(header => <th key={header}>{header.replace(/_/g, ' ').toUpperCase()}</th>)}
+            {headers.map(header => <th key={header}>{header.replace(/_/g, ' ')}</th>)}
           </tr>
         </thead>
         <tbody>
-          {results.map((user, index) => (
+          {results.map((row, index) => (
             <tr key={index}>
-              <td>{user.ID}</td>
-              <td>{user.First_Name}</td>
-              <td>{user.Last_Name}</td>
-              <td>{user.Role}</td>
-              <td>{user.Address}</td>
-              <td>{user.City_ID}</td>
+              <td>{row.Address}</td>
+              <td>{row.Population}</td>
+              <td>{row.Max_Population}</td>
+              <td>{row.Difference}</td>
             </tr>
           ))}
         </tbody>
@@ -82,32 +74,22 @@ export default function Body_Query_UsersByRoleAndCity() {
 
   return (
     <div className="query-container">
-      <h1>Search Users by Role and City</h1>
+      <h1>Search Addresses by City or State</h1>
       <form onSubmit={handleSearch} className="query-form">
         <div className="form-group">
-          <label htmlFor="roleParam">Enter Role:</label>
+          <label htmlFor="cityOrState">Enter City or State:</label>
           <input
             type="text"
-            id="roleParam"
-            value={roleParam}
-            onChange={(e) => setRoleParam(e.target.value)}
-            placeholder="e.g., Volunteer"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="cityIdParam">Enter City ID:</label>
-          <input
-            type="text"
-            id="cityIdParam"
-            value={cityIdParam}
-            onChange={(e) => setCityIdParam(e.target.value)}
-            placeholder="e.g., 1"
+            id="cityOrState"
+            value={cityOrState}
+            onChange={(e) => setCityOrState(e.target.value)}
+            placeholder="e.g., Seattle or WA"
           />
         </div>
         <button type="submit" disabled={isLoading}>
           {isLoading ? 'Searching...' : 'Search'}
         </button>
-        <a href="home">Back to Main Page</a>
+        <a href="index.html">Back to Main Page</a>
       </form>
       <div className="results-container">
         {isLoading && <p>Loading results...</p>}
@@ -117,3 +99,6 @@ export default function Body_Query_UsersByRoleAndCity() {
     </div>
   );
 }
+
+
+

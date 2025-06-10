@@ -1,10 +1,11 @@
-const submitEmergencyReport = async (req, connection) => {
+
+const updateLocationPopulation = async (req, connection) => {
   const userId = req.query.userId;
   const emergencyId = req.query.emergencyId;
   const locationId = req.query.locationId;
 
   if (!connection) {
-    console.error("Database connection not provided to submitEmergencyReport");
+    console.error("Database connection not provided to updateLocationPopulation");
     throw new Error("Database connection is not available.");
   }
 
@@ -47,17 +48,10 @@ const submitEmergencyReport = async (req, connection) => {
     }
 
     const maxPopulation = structureRows[0].Max_population;
-    const currentPopulation = (locationRows[0].Population || 0) + 1; // Increment location population by 1
+    const currentPopulation = (locationRows[0].Population || 0) + 1; // Increment population by 1
     if (currentPopulation > maxPopulation) {
-      throw new Error('Location population would exceed structure type maximum capacity; cannot submit report.');
+      throw new Error('Location population would exceed structure type maximum capacity.');
     }
-
-    // Insert new report
-    const [reportResult] = await connection.execute(
-      'INSERT INTO reports (Emergency_Type_ID, Location_ID, Users_ID, Date_Time) VALUES (?, ?, ?, NOW())',
-      [emergencyId, locationId, userId]
-    );
-    const reportId = reportResult.insertId;
 
     // Update location population
     await connection.execute(
@@ -70,9 +64,9 @@ const submitEmergencyReport = async (req, connection) => {
 
     return {
       success: true,
-      message: 'Emergency report submitted successfully.',
-      reportId: reportId,
-      updatedLocationPopulation: currentPopulation
+      message: 'Location population updated successfully.',
+      updatedPopulation: currentPopulation,
+      locationId: locationId
     };
   } catch (err) {
     // Rollback on error
@@ -82,4 +76,4 @@ const submitEmergencyReport = async (req, connection) => {
   }
 };
 
-export { submitEmergencyReport };
+export { updateLocationPopulation };

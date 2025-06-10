@@ -7,8 +7,8 @@ import { handleDateReports } from './src/controller/queryOneController.js'
 import { handleAllUsers } from './src/controller/queryTwoController.js';
 import { handleReportsByLocation } from './src/controller/queryThreeController.js';
 import { handleReportsByEmergencyCount } from './src/controller/queryFourController.js';
-import { handleUsersByRoleAndCity } from './src/controller/queryFiveController.js';
-import { submitEmergencyReport } from './src/controller/querySixController.js';
+import { handleAddressesByCityOrState} from './src/controller/queryFiveController.js';
+import { updateLocationPopulation } from './src/controller/querySixController.js';
 // Importing the mysql2 library for database operations
 import mysql from 'mysql2/promise';
 
@@ -88,35 +88,23 @@ app.get('/api/reportsByEmergencyCount', async (req, res) => {
 });
 
 // query 5
-app.get('/api/usersByRoleAndCity', async (req, res) => {
-    if (!connection) {
-        console.error('API call to /api/usersByRoleAndCity but database connection is not available.'); //==========> database connection test
-        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
-    }
-    try {
-        const results = await handleUsersByRoleAndCity(req, connection);
-        res.status(200).json(results);
-    } catch (err) {
-        console.error('Route error', err);
-        res.status(500).json({ error: err.message });
-    }
+
+app.get('/api/addressesByCityOrState', async (req, res) => {
+  if (!connection) {
+    console.error('API call to /api/addressesByCityOrState but database connection is not available.');
+    return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+  }
+  try {
+    const result = await handleAddressesByCityOrState(req, connection);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error('Route error:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Query 6
 
-// app.get('/api/submitEmergencyReport', async (req, res) => {
-//     if (!connection) {
-//         console.error('API call to /api/submitEmergencyReport but database connection is not available.'); //==========> database connection test
-//         return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
-//     }
-//     try {
-//         const result = await submitEmergencyReport(req, connection);
-//         res.status(200).json(result);
-//     } catch (err) {
-//         console.error('Route error:', err);
-//         res.status(500).json({ error: err.message });
-//     }
-// });
+
 
 app.get('/api/users', async (req, res) => {
     if (!connection) {
@@ -161,32 +149,32 @@ app.get('/api/emergencies', async (req, res) => {
 });
 
 
-app.post('/api/submitEmergencyReport', async (req, res) => {
-    if (!connection) {
-        console.error('API call to /api/submitEmergencyReport but database connection is not available.');
-        return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
-    }
-    try {
-        // Validate query parameters for userId, emergencyId, and locationId
-        const { userId, emergencyId, locationId } = req.query;
-        if (!userId || !emergencyId || !locationId) {
-            return res.status(400).json({ error: 'Missing required query parameters: userId, emergencyId, and locationId are all required.' });
-        }
-        if (isNaN(userId) || Number(userId) <= 0 || isNaN(emergencyId) || Number(emergencyId) <= 0 || isNaN(locationId) || Number(locationId) <= 0) {
-            return res.status(400).json({ error: 'Invalid query parameters: userId, emergencyId, and locationId must be positive numbers.' });
-        }
 
-        const result = await submitEmergencyReport(req, connection);
-        res.status(200).json(result);
-    } catch (err) {
-        console.error('Route error:', err);
-        // Customize response based on error type
-        if (err.message.includes('does not exist') || err.message.includes('would exceed')) {
-            res.status(400).json({ error: err.message });
-        } else {
-            res.status(500).json({ error: 'Transaction failed: ' + err.message });
-        }
+app.post('/api/updateLocationPopulation', async (req, res) => {
+  if (!connection) {
+    console.error('API call to /api/updateLocationPopulation but database connection is not available.');
+    return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
+  }
+  try {
+    // Validate query parameters for userId, emergencyId, and locationId
+    const { userId, emergencyId, locationId } = req.query;
+    if (!userId || !emergencyId || !locationId) {
+      return res.status(400).json({ error: 'Missing required query parameters: userId, emergencyId, and locationId are all required.' });
     }
+    if (isNaN(userId) || Number(userId) <= 0 || isNaN(emergencyId) || Number(emergencyId) <= 0 || isNaN(locationId) || Number(locationId) <= 0) {
+      return res.status(400).json({ error: 'Invalid query parameters: userId, emergencyId, and locationId must be positive numbers.' });
+    }
+
+    const result = await updateLocationPopulation(req, connection);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error('Route error:', err);
+    if (err.message.includes('does not exist') || err.message.includes('would exceed')) {
+      res.status(400).json({ error: err.message });
+    } else {
+      res.status(500).json({ error: 'Transaction failed: ' + err.message });
+    }
+  }
 });
 
 // handleReportsMadeByUser
