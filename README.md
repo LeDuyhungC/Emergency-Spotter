@@ -164,4 +164,3 @@ The parameter check box which returns all the emergencies and their count. You c
 Query 5: This query lets a user search users by their role and specified city. If either user or city don’t exist, then it returns an error message.
 
 Query 6: This query implements the transaction logic. The user can either choose from the dropdown menu or type each themselves. A special report is submitted, the user, emergency, and location must already exist. If one of them doesn’t, it rolls back and tells the user that the specific ID doesn’t exist. If a report is successfully submitted, meaning the user entered a valid existing user, location, and emergency, then a report is created and added to the reports table with that information. The population for that location is incremented by 1. If the population at that location exceeds the max_population for its structure_type, then it rolls back and returns an error. 
-
