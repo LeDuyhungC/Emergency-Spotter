@@ -111,8 +111,11 @@ DEPENDENCIES LIST:
 PORT=3306
 
 DB_HOST=localhost
+
 DB_USER=root
+
 DB_PASSWORD=your_mysql_password
+
 DB_NAME=emergency_spotter_db
 
 VITE_API_KEY_GOOGLE_MAP=YOUR_GOOGLE_MAPS_API_KEY_HERE
