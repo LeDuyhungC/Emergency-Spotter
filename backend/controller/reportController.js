@@ -42,33 +42,41 @@ async function submitReport(req, connection) {
         }
 
         // Step 3: Find or Insert Structure Type
-        let structureTypeId;
+        let structureTypeId, maxPopulation;
         const [structureRows] = await connection.execute(
-            'SELECT Id FROM structure_type WHERE Services = ? AND Hours = ?',
+            'SELECT Id, Max_population FROM structure_type WHERE Services = ? AND Hours = ?',
             [services, hours]
         );
+
         if (structureRows.length > 0) {
             structureTypeId = structureRows[0].Id;
+            maxPopulation = structureRows[0].Max_population;
         } else {
             const [structureResult] = await connection.execute(
                 'INSERT INTO structure_type (Max_population, Services, Hours) VALUES (?, ?, ?)',
-                [population, services, hours] // Use form population as Max_population
+                [population, services, hours]
             );
             structureTypeId = structureResult.insertId;
+            maxPopulation = population;
         }
 
-        // Step 4: Find or Insert Location
+        if (population > maxPopulation) {
+            throw new Error(`Population (${population}) exceeds structure's max capacity (${maxPopulation})`);
+        }
+
+// Step 4: Find or Insert Location
         let locationId;
         const [locationRows] = await connection.execute(
             'SELECT Id FROM location WHERE Address = ?',
             [location]
         );
+
         if (locationRows.length > 0) {
             locationId = locationRows[0].Id;
-            // Update Population if it exists
+            // Safe to update because we already validated
             await connection.execute(
-                'UPDATE location SET Population = ? WHERE Id = ?',
-                [population, locationId]
+                'UPDATE location SET Population = ?, City_Id = ? WHERE Id = ?',
+                [population, structureTypeId, locationId]
             );
         } else {
             const [locationResult] = await connection.execute(
@@ -79,7 +87,7 @@ async function submitReport(req, connection) {
         }
 
         // Step 5: Insert Report
-        const dateTime = `${date} ${time}:00`; // Ensure proper MySQL timestamp format
+        const dateTime = `${date} ${time}:00`;
         const [reportResult] = await connection.execute(
             'INSERT INTO reports (Emergency_TYPE_ID, Location_ID, Users_ID, Date_TIME) VALUES (?, ?, ?, ?)',
             [emergencyId, locationId, userId, dateTime]
