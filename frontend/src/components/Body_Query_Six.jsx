@@ -84,7 +84,7 @@ export default function Body_Query_Six() {
   };
 
   const renderResult = () => {
-    if (!result && !isLoading && !error) return <p className="text-gray-600">Enter or select details to submit a report.</p>;
+    if (!result && !isLoading && !error) return <p className="text-gray-600">Enter or select details to update a population.</p>;
     if (!result) return null;
 
     return (
@@ -106,7 +106,7 @@ export default function Body_Query_Six() {
 
   return (
       <div className="query-container">
-        <h1 className="text-2xl font-bold mb-4 text-center">Submit Emergency Report</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Update Population</h1>
         <div className="query-form space-y-4">
           <div>
             <label htmlFor="userId" className="block text-sm font-medium text-gray-700">Select or Enter User ID:</label>
@@ -186,7 +186,7 @@ export default function Body_Query_Six() {
               disabled={isLoading}
               className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
           >
-            {isLoading ? 'Submitting...' : 'Submit Report'}
+            {isLoading ? 'Submitting...' : 'Update Population'}
           </button>
           <a href="home" className="block text-center text-blue-500 hover:underline">Back to Main Page</a>
         </div>

@@ -20,7 +20,7 @@ export default function Body_Query_AddressesByCityOrState() {
     }
 
     try {
-      const url = `http://localhost:5004/api/addressesByCityOrState?cityOrState=${encodeURIComponent(cityOrState)}`;
+      const url = `http://localhost:5002/api/addressesByCityOrState?cityOrState=${encodeURIComponent(cityOrState)}`;
       const response = await fetch(url);
       const text = await response.text();
       console.log('Raw response:', text);
@@ -48,10 +48,10 @@ export default function Body_Query_AddressesByCityOrState() {
     if (results.length === 0 && !isLoading && error) return null;
     if (results.length === 0) return null;
 
-    const headers = ['Address', 'Population', 'Max Population', 'Difference'];
+    const headers = ['Address', 'Population', 'Max Population', 'Available Spots'];
 
     return (
-      <table className="results-table">
+      <table className="table table-dark table-striped table-hover">
         <thead>
           <tr>
             {headers.map(header => <th key={header}>{header.replace(/_/g, ' ')}</th>)}

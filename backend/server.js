@@ -11,8 +11,8 @@ import { handleReportsMadeByUser } from './controller/queryTwoController.js';
 
 import { handleReportsByLocation } from './controller/queryThreeController.js';
 import { handleReportsByEmergencyCount } from './controller/queryFourController.js';
-import { handleUsersByRoleAndCity } from './controller/queryFiveController.js';
-import {submitEmergencyReport} from './controller/querySixController.js';
+import { handleAddressesByCityOrState } from './controller/queryFiveController.js';
+import {updateLocationPopulation } from './controller/querySixController.js';
 
 
 // Step 4: Import Database Configuration
@@ -141,13 +141,13 @@ app.get('/api/reportsByEmergencyCount', async (req, res) => {
 });
 //============================================================[Query 5]======================================================================
 
-app.get('/api/usersByRoleAndCity', async (req, res) => {
+app.get('/api/addressesByCityOrState', async (req, res) => {
     if (!connection) {
         console.error('API call to /api/usersByRoleAndCity but database connection is not available.'); //==========> database connection test
         return res.status(503).json({ error: 'Service temporarily unavailable. Database not connected.' });
     }
     try {
-        const results = await handleUsersByRoleAndCity(req, connection);
+        const results = await handleAddressesByCityOrState(req, connection);
         res.status(200).json(results);
     } catch (err) {
         console.error('Route error', err);
@@ -215,7 +215,7 @@ app.post('/api/submitEmergencyReport', async (req, res) => {
             return res.status(400).json({ error: 'Invalid query parameters: userId, emergencyId, and locationId must be positive numbers.' });
         }
 
-        const result = await submitEmergencyReport(req, connection);
+        const result = await updateLocationPopulation(req, connection);
         res.status(200).json(result);
     } catch (err) {
         console.error('Route error:', err);
